@@ -151,7 +151,8 @@
     vscode = {
       enable = true;
       profiles.default.extensions = with pkgs.vscode-extensions; [
-       # dafny-lang
+        jnoortheen.nix-ide
+        # dafny-lang
       ];
     };
   };
@@ -165,10 +166,6 @@
   services.gpg-agent = {
     enable = true;
     enableSshSupport = true;
-    pinentry.package =
-      if pkgs.stdenv.isLinux then
-        pkgs.pinentry-all
-      else
-        pkgs.pinentry_mac;
+    pinentry.package = if pkgs.stdenv.isLinux then pkgs.pinentry-all else pkgs.pinentry_mac;
   };
 }
