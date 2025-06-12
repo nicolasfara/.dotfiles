@@ -48,6 +48,7 @@
             {
               home-manager.users.nicolas.imports = [
                 ./home-manager/home.nix
+                ./home-manager/zsh.nix
               ];
               home-manager.extraSpecialArgs = {
                 inherit inputs outputs;
