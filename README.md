@@ -3,7 +3,7 @@
 Getting started with
 
 ```bash
-git clone git@github.com/nicolasfara/.dotfiles.git ~
+git clone git@github.com:nicolasfara/.dotfiles.git ~
 cd ~/.dotfiles
 sudo nixos-rebuild switch --flake ~/.dotfiles#laptop' # you can choose between {home|laptop|work}
 ```
