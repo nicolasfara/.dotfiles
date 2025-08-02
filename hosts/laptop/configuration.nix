@@ -33,6 +33,7 @@ in
       efiCanTouchEfiVariables = true;
       useOSProber = true;  # Enable OS prober to find other OSes
     };
+    efi.canTouchEfiVariables = true;
   };  
   
   boot.kernelPackages = latestKernelPackage;
