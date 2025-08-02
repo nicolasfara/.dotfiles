@@ -2,8 +2,21 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
+let
+  zfsCompatibleKernelPackages = lib.filterAttrs (
+    name: kernelPackages:
+    (builtins.match "linux_[0-9]+_[0-9]+" name) != null
+    && (builtins.tryEval kernelPackages).success
+    && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
+  ) pkgs.linuxKernel.packages;
+  latestKernelPackage = lib.last (
+    lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
+      builtins.attrValues zfsCompatibleKernelPackages
+    )
+  );
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -11,11 +24,30 @@
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.efiSupport = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.devices = [ "nodev" ];  # Use this for UEFI
+  boot.loader.grub.useOSProber = true;
 
   # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  
+  
+  # Note this might jump back and forth as kernels are added or removed.
+  boot.kernelPackages = latestKernelPackage;
+  
+
+  # Enable ZFS support
+  boot.supportedFilesystems = [ "zfs" ];
+  boot.zfs.forceImportRoot = false;
+  services.zfs.autoScrub.enable = true;
+
+  # # Mount /home from ZFS
+  fileSystems."/home/nicolas" = {
+    device = "rpool/home";
+    fsType = "zfs";
+    options = [ "zfsutil" ];
+  };
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -26,6 +58,7 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.hostId = "39ff30ca";
 
   # Set your time zone.
   time.timeZone = "Europe/Rome";
@@ -105,6 +138,8 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     git
+    zfs
+    util-linux
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
