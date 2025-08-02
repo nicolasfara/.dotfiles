@@ -43,7 +43,7 @@ in
   services.zfs.autoScrub.enable = true;
 
   # # Mount /home from ZFS
-  fileSystems."/home/nicolas" = {
+  fileSystems."/home" = {
     device = "rpool/home";
     fsType = "zfs";
     options = [ "zfsutil" ];
@@ -140,6 +140,7 @@ in
     git
     zfs
     util-linux
+    gptfdisk
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
