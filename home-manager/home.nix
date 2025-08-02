@@ -75,6 +75,7 @@
     nil
 
     telegram-desktop
+    nixfmt-rfc-style
 
     # JVM
     #gradle

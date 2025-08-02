@@ -24,18 +24,18 @@ in
     ];
 
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.efiSupport = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub.devices = [ "nodev" ];  # Use this for UEFI
-  boot.loader.grub.useOSProber = true;
-
-  # Use latest kernel.
+  boot.loader = {
+    grub = {
+      enable = true;
+      device = [ "nodev" ];  # Use this for UEFI
+      efiSupport = true;
+      efiInstallAsRemovable = true;  # Install as removable device
+      efiCanTouchEfiVariables = true;
+      useOSProber = true;  # Enable OS prober to find other OSes
+    };
+  };  
   
-  
-  # Note this might jump back and forth as kernels are added or removed.
   boot.kernelPackages = latestKernelPackage;
-  
 
   # Enable ZFS support
   boot.supportedFilesystems = [ "zfs" ];
