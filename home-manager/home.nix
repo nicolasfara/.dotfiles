@@ -74,6 +74,8 @@
 
     nil
 
+    telegram-desktop
+
     # JVM
     #gradle
     #scala
