@@ -1,4 +1,8 @@
+{ ... }:
+
 {
-  home = import ./home.nix;
-  zsh = import ./zsh.nix;
+  imports = [
+    ./home.nix
+    ./zsh.nix
+  ];
 }

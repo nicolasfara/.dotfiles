@@ -53,8 +53,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.nicolas.imports = [
-                ./home-manager/home.nix
-                ./home-manager/zsh.nix
+                ./modules/home-manager/default.nix
               ];
               home-manager.extraSpecialArgs = {
                 inherit inputs outputs;
