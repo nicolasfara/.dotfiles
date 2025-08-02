@@ -27,10 +27,8 @@ in
   boot.loader = {
     grub = {
       enable = true;
-      device = [ "nodev" ];  # Use this for UEFI
+      devices = [ "nodev" ];  # Use this for UEFI
       efiSupport = true;
-      efiInstallAsRemovable = true;  # Install as removable device
-      efiCanTouchEfiVariables = true;
       useOSProber = true;  # Enable OS prober to find other OSes
     };
     efi.canTouchEfiVariables = true;
