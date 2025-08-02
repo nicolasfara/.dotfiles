@@ -41,6 +41,17 @@ in
   boot.zfs.forceImportRoot = false;
   services.zfs.autoScrub.enable = true;
 
+  # Enable Sanoid for ZFS snapshot management
+  services.sanoidCustom = {
+    enable = true;
+    datasets = {
+      "rpool/home" = {
+        template = "backup";
+        recursive = true;
+      };
+    };
+  };
+
   # # Mount /home from ZFS
   fileSystems."/home" = {
     device = "rpool/home";
@@ -127,9 +138,6 @@ in
 
   # Install firefox.
   programs.firefox.enable = true;
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget

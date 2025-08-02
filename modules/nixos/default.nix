@@ -1,0 +1,3 @@
+{
+  sanoid = import ./sanoid.nix;
+}

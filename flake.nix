@@ -7,6 +7,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -14,6 +18,7 @@
       self,
       nixpkgs,
       home-manager,
+      sops-nix,
     }@inputs:
     let
       inherit (self) outputs;
@@ -25,18 +30,13 @@
     in
     {
       packages = forAllSystems (
-        system:
-        import nixpkgs {
-          inherit system;
-          config = {
-            allowUnfree = true;
-          };
+        system: {
+          # Add custom packages/derivations here if needed
+          # Example: myPackage = pkgs.callPackage ./pkgs/my-package {};
         }
       );
 
       nixosModules = import ./modules/nixos;
-
-      homeManagerModules = import ./modules/home-manager;
 
       nixosConfigurations = {
         laptop = nixpkgs.lib.nixosSystem {
@@ -44,15 +44,20 @@
           specialArgs = { inherit inputs outputs; };
           modules = [
             ./hosts/laptop/configuration.nix
+            self.nixosModules.sanoid
             home-manager.nixosModules.home-manager
             {
+              # Allow unfree packages
+              nixpkgs.config.allowUnfree = true;
+              
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
               home-manager.users.nicolas.imports = [
                 ./home-manager/home.nix
                 ./home-manager/zsh.nix
               ];
               home-manager.extraSpecialArgs = {
                 inherit inputs outputs;
-                pkgs = self.packages."x86_64-linux";
               };
             }
           ];
