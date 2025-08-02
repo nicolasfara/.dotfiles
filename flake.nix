@@ -43,7 +43,7 @@
           system = "x86_64-linux";
           specialArgs = { inherit inputs outputs; };
           modules = [
-            ./nixos/configuration.nix
+            ./hosts/laptop/configuration.nix
             home-manager.nixosModules.home-manager
             {
               home-manager.users.nicolas.imports = [
