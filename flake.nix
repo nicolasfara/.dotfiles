@@ -7,10 +7,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    agenix.url = "github:ryantm/agenix";
   };
 
   outputs =
@@ -18,7 +15,7 @@
       self,
       nixpkgs,
       home-manager,
-      sops-nix,
+      agenix,
     }@inputs:
     let
       inherit (self) outputs;
@@ -27,6 +24,21 @@
         "x86_64-linux"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
+      
+      # Helper function to create NixOS system with common modules
+      mkSystem = system: modules: nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit inputs outputs; };
+        modules = [
+          agenix.nixosModules.default
+          {
+            # Install agenix package for any system
+            environment.systemPackages = [ agenix.packages.${system}.default ];
+            # Allow unfree packages globally
+            nixpkgs.config.allowUnfree = true;
+          }
+        ] ++ modules;
+      };
     in
     {
       packages = forAllSystems (
@@ -42,32 +54,26 @@
         # ---------------------------------
         # Laptop Configuration
         # ---------------------------------
-        laptop = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs outputs; };
-          modules = [
-            ./hosts/laptop/configuration.nix
-            self.nixosModules.sanoid
-            home-manager.nixosModules.home-manager
-            {
-              # Allow unfree packages
-              nixpkgs.config.allowUnfree = true;
-              
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.nicolas.imports = [
-                ./modules/home-manager/default.nix
-              ];
-              home-manager.users.nicolas.programs.onepassword-git = {
-                enable = true;
-                signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
-              };
-              home-manager.extraSpecialArgs = {
-                inherit inputs outputs;
-              };
-            }
-          ];
-        };
+        laptop = mkSystem "x86_64-linux" [
+          ./hosts/laptop/configuration.nix
+          self.nixosModules.sanoid
+          self.nixosModules.secrets
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.nicolas.imports = [
+              ./modules/home-manager/default.nix
+            ];
+            home-manager.users.nicolas.programs.onepassword-git = {
+              enable = true;
+              signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
+            };
+            home-manager.extraSpecialArgs = {
+              inherit inputs outputs;
+            };
+          }
+        ];
       };
     };
 }

@@ -77,6 +77,8 @@
     telegram-desktop
     nixfmt-rfc-style
 
+    age
+
     # JVM
     #gradle
     #scala
