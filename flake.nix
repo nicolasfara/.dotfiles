@@ -39,6 +39,9 @@
       nixosModules = import ./modules/nixos;
 
       nixosConfigurations = {
+        # ---------------------------------
+        # Laptop Configuration
+        # ---------------------------------
         laptop = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = { inherit inputs outputs; };
@@ -55,6 +58,10 @@
               home-manager.users.nicolas.imports = [
                 ./modules/home-manager/default.nix
               ];
+              home-manager.users.nicolas.programs.onepassword-git = {
+                enable = true;
+                signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
+              };
               home-manager.extraSpecialArgs = {
                 inherit inputs outputs;
               };

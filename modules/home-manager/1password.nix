@@ -1,18 +1,46 @@
-{ lib, ... }:
-{
-  # Enable the unfree 1Password packages
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "1password-gui"
-    "1password"
-  ];
-  # Alternatively, you could also just allow all unfree packages
-  # nixpkgs.config.allowUnfree = true;
+{ lib, pkgs, config, ... }:
 
-  programs._1password.enable = true;
-  programs._1password-gui = {
-    enable = true;
-    # Certain features, including CLI integration and system authentication support,
-    # require enabling PolKit integration on some desktop environments (e.g. Plasma).
-    polkitPolicyOwners = [ "nicolas" ];
+let
+  # onePassPath = "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+  onePassPath = "~/.1password/agent.sock";
+  cfg = config.programs.onepassword-git;
+in {
+  options.programs.onepassword-git = {
+    enable = lib.mkEnableOption "1Password Git integration";
+    
+    signingKey = lib.mkOption {
+      type = lib.types.str;
+      description = "SSH signing key for Git commits";
+      example = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
+    programs.ssh = {
+      enable = true;
+      extraConfig = ''
+        Host *
+            IdentityAgent ${onePassPath}
+      '';
+    };
+
+    programs.git = {
+      enable = true;
+      extraConfig = {
+        gpg = {
+          format = "ssh";
+        };
+        "gpg \"ssh\"" = {
+          program = "${lib.getExe' pkgs._1password-gui "op-ssh-sign"}";
+        };
+        commit = {
+          gpgsign = true;
+        };
+
+        user = {
+          signingKey = cfg.signingKey;
+        };
+      };
+    };
   };
 }
