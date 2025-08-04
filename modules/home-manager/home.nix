@@ -56,7 +56,7 @@
     google-chrome
     spotify
     neofetch
-    #jetbrains.idea-ultimate
+    jetbrains.idea-ultimate
     signal-desktop-bin
     prismlauncher
     git
@@ -83,13 +83,13 @@
     age
 
     # JVM
-    #gradle
-    #scala
-    #metals
-    #coursier
-    #sbt
-    #scala-cli
-    #kotlin
+    gradle
+    scala
+    metals
+    coursier
+    sbt
+    scala-cli
+    kotlin
   ];
 
   home.file = {
