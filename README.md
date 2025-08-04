@@ -15,6 +15,14 @@ nix flake update
 sudo nixos-rebuild switch --flake ~/.dotfiles#laptop' # you can choose between {home|laptop|work}
 ```
 
+## Update or create secrets
+
+```bash
+nix-shell -p sops --run "sops secrets.yaml"
+```
+
+Note: execute the command at the same level of `secrets.yaml` or provide the path to it.
+
 ## Nixos Documentations
 
 - [Nixos & Flakes Book](https://nixos-and-flakes.thiscute.world/)

@@ -22,14 +22,10 @@
         // You can write arbitrary Nix expressions here, to produce valid "options" declaration result.
         // Tip: for flake-based configuration, utilize `builtins.getFlake`
         "nixos": {
-          "expr": "(builtins.getFlake \"/absolute/path/to/flake\").nixosConfigurations.<name>.options",
+          "expr": "(builtins.getFlake \"/home/nicolas/.dotfiles\").nixosConfigurations.laptop.options",
         },
         "home-manager": {
-          "expr": "(builtins.getFlake \"/absolute/path/to/flake\").homeConfigurations.<name>.options",
-        },
-        // Tip: use ${workspaceFolder} variable to define path
-        "nix-darwin": {
-          "expr": "(builtins.getFlake \"${workspaceFolder}/path/to/flake\").darwinConfigurations.<name>.options",
+          "expr": "(builtins.getFlake \"/home/nicolas/.dotfiles\").nixosConfigurations.laptop.config.home-manager.users.nicolas.options",
         },
       },
     }

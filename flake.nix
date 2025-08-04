@@ -24,27 +24,27 @@
         "x86_64-linux"
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
-      
+
       # Helper function to create NixOS system with common modules
-      mkSystem = system: modules: nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = { inherit inputs outputs; };
-        modules = [
-          sops-nix.nixosModules.sops
-          {
-            # Allow unfree packages globally
-            nixpkgs.config.allowUnfree = true;
-          }
-        ] ++ modules;
-      };
+      mkSystem =
+        system: modules:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            sops-nix.nixosModules.sops
+            {
+              # Allow unfree packages globally
+              nixpkgs.config.allowUnfree = true;
+            }
+          ] ++ modules;
+        };
     in
     {
-      packages = forAllSystems (
-        system: {
-          # Add custom packages/derivations here if needed
-          # Example: myPackage = pkgs.callPackage ./pkgs/my-package {};
-        }
-      );
+      packages = forAllSystems (system: {
+        # Add custom packages/derivations here if needed
+        # Example: myPackage = pkgs.callPackage ./pkgs/my-package {};
+      });
 
       nixosModules = import ./modules/nixos;
 

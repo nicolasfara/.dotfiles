@@ -1,12 +1,18 @@
-{ lib, pkgs, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 
 let
   onePassPath = "~/.1password/agent.sock";
   cfg = config.programs.onepassword;
-in {
+in
+{
   options.programs.onepassword = {
     enable = lib.mkEnableOption "1Password Git integration";
-    
+
     signingKey = lib.mkOption {
       type = lib.types.str;
       description = "SSH signing key for Git commits";

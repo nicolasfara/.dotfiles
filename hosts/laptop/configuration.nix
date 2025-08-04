@@ -2,7 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   zfsCompatibleKernelPackages = lib.filterAttrs (
@@ -18,22 +23,22 @@ let
   );
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader = {
     grub = {
       enable = true;
-      devices = [ "nodev" ];  # Use this for UEFI
+      devices = [ "nodev" ]; # Use this for UEFI
       efiSupport = true;
-      useOSProber = true;  # Enable OS prober to find other OSes
+      useOSProber = true; # Enable OS prober to find other OSes
     };
     efi.canTouchEfiVariables = true;
-  };  
-  
+  };
+
   boot.kernelPackages = latestKernelPackage;
 
   # Enable ZFS support
@@ -128,11 +133,14 @@ in
   users.users.nicolas = {
     isNormalUser = true;
     description = "Nicolas Farabegoli";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
       kdePackages.kate
       vscode
-    #  thunderbird
+      #  thunderbird
     ];
   };
 

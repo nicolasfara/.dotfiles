@@ -130,11 +130,19 @@
     # EDITOR = "emacs";
   };
 
+  # Enable Nix experimental features for user
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
+
   programs = {
     home-manager.enable = true;
     gpg.enable = true;
     google-chrome.enable = true;
-  
+
     java = {
       enable = true;
       package = pkgs.jdk23;
