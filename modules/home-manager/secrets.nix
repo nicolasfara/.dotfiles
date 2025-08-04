@@ -1,15 +1,19 @@
-{ ... }:
+{ config, ... }:
 {
-  # Home Manager agenix configuration
-  age.identityPaths = [ "/home/nicolas/.ssh/id_ed25519" ];
+  sops = {
+    age.keyFile = "/home/nicolas/.config/sops/age/keys.txt";
+    defaultSopsFile = ../../secrets.yaml;
 
-  age.secrets = {
-    backblaze-account-id = {
-      file = ../../secrets/backblaze-account-id.age;
-    };
-    
-    backblaze-account-key = {
-      file = ../../secrets/backblaze-account-key.age;
+    secrets = {
+      backblaze_account_id = {
+        path = "${config.sops.defaultSymlinkPath}/backblaze_account_id";
+      };
+      backblaze_account_key = {
+        path = "${config.sops.defaultSymlinkPath}/backblaze_account_key";
+      };
+      restic_password = {
+        path = "${config.sops.defaultSymlinkPath}/restic_password";
+      };
     };
   };
 }

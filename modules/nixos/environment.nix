@@ -10,6 +10,9 @@
     gptfdisk
     restic
     syncthing
+    libfprint
+    libfprint-tod
+    direnv
   ];
 
   # Enable ZSH as the default shell

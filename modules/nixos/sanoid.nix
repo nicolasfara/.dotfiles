@@ -3,10 +3,10 @@
 with lib;
 
 let
-  cfg = config.services.sanoidCustom;
+  cfg = config.services.sanoidService;
 in
 {
-  options.services.sanoidCustom = {
+  options.services.sanoidService = {
     enable = mkEnableOption "Enable Sanoid ZFS snapshot management";
 
     datasets = mkOption {

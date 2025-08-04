@@ -42,7 +42,7 @@ in
   services.zfs.autoScrub.enable = true;
 
   # Enable Sanoid for ZFS snapshot management
-  services.sanoidCustom = {
+  services.sanoidService = {
     enable = true;
     datasets = {
       "rpool/home" = {
@@ -52,7 +52,7 @@ in
     };
   };
 
-  # # Mount /home from ZFS
+  # Mount /home from ZFS
   fileSystems."/home" = {
     device = "rpool/home";
     fsType = "zfs";

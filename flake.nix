@@ -7,7 +7,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    agenix.url = "github:ryantm/agenix";
+    sops-nix.url = "github:Mic92/sops-nix";
   };
 
   outputs =
@@ -15,7 +15,7 @@
       self,
       nixpkgs,
       home-manager,
-      agenix,
+      sops-nix,
     }@inputs:
     let
       inherit (self) outputs;
@@ -30,10 +30,8 @@
         inherit system;
         specialArgs = { inherit inputs outputs; };
         modules = [
-          agenix.nixosModules.default
+          sops-nix.nixosModules.sops
           {
-            # Install agenix package for any system
-            environment.systemPackages = [ agenix.packages.${system}.default ];
             # Allow unfree packages globally
             nixpkgs.config.allowUnfree = true;
           }
@@ -64,9 +62,12 @@
             home-manager.useUserPackages = true;
             home-manager.users.nicolas.imports = [
               ./modules/home-manager/default.nix
-              agenix.homeManagerModules.default
             ];
-            home-manager.users.nicolas.programs.onepassword-git = {
+            home-manager.sharedModules = [
+              sops-nix.homeManagerModules.sops
+            ];
+            home-manager.users.nicolas.programs.restic.bucketName = "nixos-alice-backup";
+            home-manager.users.nicolas.programs.onepassword = {
               enable = true;
               signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
             };

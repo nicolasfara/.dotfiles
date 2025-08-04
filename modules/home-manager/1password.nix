@@ -2,9 +2,9 @@
 
 let
   onePassPath = "~/.1password/agent.sock";
-  cfg = config.programs.onepassword-git;
+  cfg = config.programs.onepassword;
 in {
-  options.programs.onepassword-git = {
+  options.programs.onepassword = {
     enable = lib.mkEnableOption "1Password Git integration";
     
     signingKey = lib.mkOption {
