@@ -57,13 +57,14 @@
         laptop = mkSystem "x86_64-linux" [
           ./hosts/laptop/configuration.nix
           self.nixosModules.sanoid
-          self.nixosModules.secrets
+          self.nixosModules.env
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.nicolas.imports = [
               ./modules/home-manager/default.nix
+              agenix.homeManagerModules.default
             ];
             home-manager.users.nicolas.programs.onepassword-git = {
               enable = true;
@@ -74,6 +75,7 @@
             };
           }
         ];
+        # ---------------------------------
       };
     };
 }

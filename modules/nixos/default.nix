@@ -1,4 +1,4 @@
 {
   sanoid = import ./sanoid.nix;
-  secrets = import ./secrets.nix;
+  env = import ./environment.nix;
 }

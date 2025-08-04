@@ -8,5 +8,11 @@
     zfs
     util-linux
     gptfdisk
+    restic
+    syncthing
   ];
+
+  # Enable ZSH as the default shell
+  programs.zsh.enable = true;
+  users.defaultUserShell = pkgs.zsh;
 }
