@@ -82,6 +82,8 @@
 
     age
 
+    remmina
+
     # JVM
     gradle
     scala
@@ -127,7 +129,7 @@
   };
 
   home.sessionVariables = {
-    # EDITOR = "emacs";
+    EDITOR = "vim";
   };
 
   # Enable Nix experimental features for user

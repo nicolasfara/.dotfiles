@@ -14,6 +14,9 @@
       restic_password = {
         path = "${config.sops.defaultSymlinkPath}/restic_password";
       };
+      syncthing_password = {
+        path = "${config.sops.defaultSymlinkPath}/syncthing_password";
+      };
     };
   };
 }

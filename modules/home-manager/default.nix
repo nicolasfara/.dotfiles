@@ -6,6 +6,7 @@
     ./home.nix
     ./restic.nix
     ./secrets.nix
+    ./syncthing.nix
     ./zsh.nix
   ];
 }
