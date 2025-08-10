@@ -74,15 +74,14 @@
 
     nil
 
-    _1password-gui
-    _1password-cli
-
     telegram-desktop
     nixfmt-rfc-style
 
     age
 
     remmina
+
+    kicad
 
     # JVM
     gradle

@@ -7,6 +7,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
     sops-nix.url = "github:Mic92/sops-nix";
   };
 
@@ -15,6 +20,7 @@
       self,
       nixpkgs,
       home-manager,
+      plasma-manager,
       sops-nix,
     }@inputs:
     let
@@ -65,6 +71,7 @@
             ];
             home-manager.sharedModules = [
               sops-nix.homeManagerModules.sops
+              plasma-manager.homeManagerModules.plasma-manager
             ];
             home-manager.users.nicolas.programs.restic.bucketName = "nixos-alice-backup";
             home-manager.users.nicolas.programs.onepassword = {

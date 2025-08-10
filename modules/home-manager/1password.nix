@@ -21,6 +21,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+
+    home.packages = with pkgs; [
+      _1password-gui
+      _1password-cli
+    ];
+
     programs.ssh = {
       enable = true;
       extraConfig = ''
