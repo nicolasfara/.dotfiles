@@ -29,6 +29,17 @@
           ignorePerms = false;
         };
       };
+
+      ignores = [
+        ".DS_Store"
+        ".git"
+        ".gitignore"
+        ".idea"
+        "node_modules"
+        "vendor"
+        # Ignore specific folders
+        "repos"
+      ];
     };
   };
 }

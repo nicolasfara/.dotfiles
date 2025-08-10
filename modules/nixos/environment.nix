@@ -10,6 +10,8 @@
     gptfdisk
     restic
     syncthing
+    fprintd
+    fprintd-tod
     libfprint
     libfprint-tod
     direnv

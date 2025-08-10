@@ -83,6 +83,9 @@
 
     kicad
 
+    freecad-wayland
+    prusa-slicer
+
     # JVM
     gradle
     scala
