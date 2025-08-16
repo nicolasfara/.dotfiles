@@ -26,7 +26,6 @@
     gnumake
     inkscape
     gnumake
-    cargo
     wl-clipboard
     tree
     zstd
@@ -94,6 +93,9 @@
     sbt
     scala-cli
     kotlin
+
+    rustup
+    espup
   ];
 
   home.file = {
