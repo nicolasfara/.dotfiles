@@ -41,8 +41,6 @@ in
 
   boot.kernelPackages = latestKernelPackage;
 
-  programs.nix-ld.enable = true;
-
   # Enable ZFS support
   boot.supportedFilesystems = [ "zfs" ];
   boot.zfs.forceImportRoot = false;

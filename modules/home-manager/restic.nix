@@ -47,6 +47,11 @@ in
               export B2_ACCOUNT_KEY="$(cat ${config.sops.secrets.backblaze_account_key.path})"
               export RESTIC_REPOSITORY="b2:${cfg.bucketName}"
               export RESTIC_PASSWORD="$(cat ${config.sops.secrets.restic_password.path})"
+              HEALTHCHECKS_KEY="$(cat ${config.sops.secrets.healthchecks_alice.path})"
+              HEALTHCHECKS_URL="https://hc-ping.com/$HEALTHCHECKS_KEY"
+
+              # Notify healthchecks that backup is starting
+              ${pkgs.curl}/bin/curl -fsS -m 10 --retry 5 "$HEALTHCHECKS_URL/start" || true
 
               # Initialize repository if it doesn't exist
               ${pkgs.restic}/bin/restic snapshots || ${pkgs.restic}/bin/restic init
@@ -77,9 +82,21 @@ in
                 --keep-weekly 12 \
                 --keep-monthly 12 \
                 --prune
+
+              # Notify healthchecks that backup completed successfully
+              ${pkgs.curl}/bin/curl -fsS -m 10 --retry 5 "$HEALTHCHECKS_URL" || true
             '';
           in
           "${resticScript}";
+
+        # Add failure notification
+        ExecStartPost = pkgs.writeShellScript "restic-backup-failure" ''
+          if [ "$SERVICE_RESULT" != "success" ]; then
+            HEALTHCHECKS_KEY="$(cat ${config.sops.secrets.healthchecks_alice.path})"
+            HEALTHCHECKS_URL="https://hc-ping.com/$HEALTHCHECKS_KEY"
+            ${pkgs.curl}/bin/curl -fsS -m 10 --retry 5 "$HEALTHCHECKS_URL/fail" || true
+          fi
+        '';
 
         # Security settings
         ProtectHome = "read-only";
