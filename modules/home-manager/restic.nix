@@ -50,13 +50,20 @@ in
               HEALTHCHECKS_KEY="$(cat ${config.sops.secrets.healthchecks_alice.path})"
               HEALTHCHECKS_URL="https://hc-ping.com/$HEALTHCHECKS_KEY"
 
+              # Create a temporary file for logs
+              LOG_FILE=$(mktemp)
+              trap "rm -f $LOG_FILE" EXIT
+
               # Notify healthchecks that backup is starting
               ${pkgs.curl}/bin/curl -fsS -m 10 --retry 5 "$HEALTHCHECKS_URL/start" || true
 
               # Initialize repository if it doesn't exist
-              ${pkgs.restic}/bin/restic snapshots || ${pkgs.restic}/bin/restic init
+              ${pkgs.restic}/bin/restic snapshots > /dev/null 2>&1 || ${pkgs.restic}/bin/restic init
 
-              # Create backup
+              # Create backup and capture output
+              BACKUP_START=$(date +%s)
+              echo "Backup started at $(date)" >> "$LOG_FILE"
+              
               ${pkgs.restic}/bin/restic backup \
                 --verbose \
                 --tag "$(hostname)" \
@@ -74,27 +81,48 @@ in
                 --exclude=".git" \
                 --exclude="target" \
                 --exclude="build" \
-                --exclude="dist"
+                --exclude="dist" 2>&1 | tee -a "$LOG_FILE"
 
-              # Clean up old snapshots (keep last 30 daily, 12 weekly, 12 monthly)
+              BACKUP_END=$(date +%s)
+              DURATION=$((BACKUP_END - BACKUP_START))
+              echo "Backup completed at $(date)" >> "$LOG_FILE"
+              echo "Duration: $DURATION seconds" >> "$LOG_FILE"
+
+              # Clean up old snapshots and capture output
+              echo "Starting cleanup..." >> "$LOG_FILE"
               ${pkgs.restic}/bin/restic forget \
                 --keep-daily 30 \
                 --keep-weekly 12 \
                 --keep-monthly 12 \
-                --prune
+                --prune 2>&1 | tee -a "$LOG_FILE"
 
-              # Notify healthchecks that backup completed successfully
-              ${pkgs.curl}/bin/curl -fsS -m 10 --retry 5 "$HEALTHCHECKS_URL" || true
+              # Get repository stats
+              echo "Repository statistics:" >> "$LOG_FILE"
+              ${pkgs.restic}/bin/restic stats --mode restore-size 2>&1 | tee -a "$LOG_FILE"
+
+              # Send success notification with log data
+              ${pkgs.curl}/bin/curl -fsS -m 30 --retry 5 \
+                --data-binary "@$LOG_FILE" \
+                --header "Content-Type: text/plain" \
+                "$HEALTHCHECKS_URL" || true
             '';
           in
           "${resticScript}";
 
-        # Add failure notification
-        ExecStartPost = pkgs.writeShellScript "restic-backup-failure" ''
+        # Add failure notification - only runs on failure
+        ExecStopPost = pkgs.writeShellScript "restic-backup-failure" ''
           if [ "$SERVICE_RESULT" != "success" ]; then
             HEALTHCHECKS_KEY="$(cat ${config.sops.secrets.healthchecks_alice.path})"
             HEALTHCHECKS_URL="https://hc-ping.com/$HEALTHCHECKS_KEY"
-            ${pkgs.curl}/bin/curl -fsS -m 10 --retry 5 "$HEALTHCHECKS_URL/fail" || true
+            
+            # Create failure message
+            ERROR_MSG="Restic backup failed on $(hostname) at $(date)
+            Service result: $SERVICE_RESULT"
+
+            ${pkgs.curl}/bin/curl -fsS -m 30 --retry 5 \
+              --data "$ERROR_MSG" \
+              --header "Content-Type: text/plain" \
+              "$HEALTHCHECKS_URL/fail" || true
           fi
         '';
 
