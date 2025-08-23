@@ -85,6 +85,9 @@
     freecad-wayland
     prusa-slicer
 
+    typst
+    typstfmt
+
     # JVM
     gradle
     scala
