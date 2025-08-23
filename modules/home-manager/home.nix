@@ -163,11 +163,11 @@
     };
     vscode = {
       enable = true;
-      profiles.default.extensions = with pkgs.vscode-extensions; [
-        jnoortheen.nix-ide
-        rust-lang.rust-analyzer
-        myriad-dreamin.tinymist
+      extensions = with pkgs.vscode-extensions; [
         james-yu.latex-workshop
+        rust-lang.rust-analyzer
+        jnoortheen.nix-ide
+        myriad-dreamin.tinymist
       ];
     };
   };
