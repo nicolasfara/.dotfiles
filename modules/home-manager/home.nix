@@ -162,7 +162,7 @@
         jnoortheen.nix-ide
         rust-lang.rust-analyzer
         myriad-dreamin.tinymist
-        James-Yu.latex-workshop
+        james-yu.latex-workshop
       ];
     };
   };
