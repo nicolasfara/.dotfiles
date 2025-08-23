@@ -161,7 +161,8 @@
       profiles.default.extensions = with pkgs.vscode-extensions; [
         jnoortheen.nix-ide
         rust-lang.rust-analyzer
-        # dafny-lang
+        myriad-dreamin.tinymist
+        James-Yu.latex-workshop
       ];
     };
   };
