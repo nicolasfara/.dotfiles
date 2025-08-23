@@ -88,6 +88,11 @@
     typst
     typstfmt
 
+    texlive.combined.scheme-medium
+
+    fira-sans
+    fira-math
+
     # JVM
     gradle
     scala
