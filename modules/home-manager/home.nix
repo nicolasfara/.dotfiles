@@ -93,6 +93,9 @@
     fira-sans
     fira-math
 
+    nodejs_24
+    eslint
+
     # JVM
     gradle
     scala
@@ -168,6 +171,7 @@
         rust-lang.rust-analyzer
         jnoortheen.nix-ide
         myriad-dreamin.tinymist
+        scalameta.metals
       ];
     };
   };

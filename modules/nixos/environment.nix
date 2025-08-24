@@ -22,4 +22,9 @@
   users.defaultUserShell = pkgs.zsh;
 
   programs.nix-ld.enable = true;
+
+  virtualisation.docker = {
+    enable = true;
+  };
+  users.users.nicolas.extraGroups = [ "docker" ];
 }
