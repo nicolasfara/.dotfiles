@@ -88,13 +88,18 @@
     typst
     typstfmt
 
-    texlive.combined.scheme-medium
+    texlive.combined.scheme-full
 
     fira-sans
     fira-math
+    font-awesome
 
     nodejs_24
     eslint
+
+    inkscape
+
+    onlyoffice-desktopeditors
 
     # JVM
     gradle
