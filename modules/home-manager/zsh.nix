@@ -13,6 +13,8 @@
           "git"
           "sudo"
           "docker"
+          "1password"
+          "rust"
         ];
       };
 

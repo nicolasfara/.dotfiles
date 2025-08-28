@@ -185,6 +185,11 @@
     enable = true;
     userName = "Nicolas Farabegoli";
     userEmail = "nicolas.farabegoli@gmail.com";
+    extraConfig = {
+      pull = {
+        rebase = true;
+      };
+    };
   };
 
   services.gpg-agent = {
