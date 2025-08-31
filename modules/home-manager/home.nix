@@ -27,6 +27,7 @@
     inkscape
     gnumake
     wl-clipboard
+    xclip
     tree
     zstd
     walk
@@ -171,7 +172,7 @@
     };
     vscode = {
       enable = true;
-      extensions = with pkgs.vscode-extensions; [
+      profiles.default.extensions = with pkgs.vscode-extensions; [
         james-yu.latex-workshop
         rust-lang.rust-analyzer
         jnoortheen.nix-ide
