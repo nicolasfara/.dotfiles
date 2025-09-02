@@ -102,6 +102,8 @@
 
     onlyoffice-desktopeditors
 
+    mqttui
+
     # JVM
     gradle
     scala
