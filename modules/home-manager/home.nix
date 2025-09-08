@@ -103,6 +103,11 @@
     onlyoffice-desktopeditors
 
     mqttui
+    uv
+
+    kdePackages.kamoso
+
+    android-tools
 
     # JVM
     gradle
