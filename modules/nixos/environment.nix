@@ -37,4 +37,13 @@
   '';
 
   users.users.nicolas.extraGroups = [ "docker" "dialout" "plugdev" ];
+  
+  # OBS Studio with DroidCam plugin
+  programs.obs-studio = {
+    enable = true;
+    enableVirtualCamera = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      droidcam-obs
+    ];
+  };
 }
