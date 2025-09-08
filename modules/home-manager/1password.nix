@@ -29,10 +29,10 @@ in
 
     programs.ssh = {
       enable = true;
-      extraConfig = ''
-        Host *
-            IdentityAgent ${onePassPath}
-      '';
+      enableDefaultConfig = false;
+      matchBlocks."*" = {
+        identityAgent = onePassPath;
+      };
     };
 
     programs.git = {

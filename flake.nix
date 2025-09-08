@@ -71,7 +71,7 @@
             ];
             home-manager.sharedModules = [
               sops-nix.homeManagerModules.sops
-              plasma-manager.homeManagerModules.plasma-manager
+              plasma-manager.homeModules.plasma-manager
             ];
             home-manager.users.nicolas.programs.restic.bucketName = "nixos-alice-backup";
             home-manager.users.nicolas.programs.onepassword = {
