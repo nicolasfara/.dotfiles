@@ -184,6 +184,7 @@
         rust-lang.rust-analyzer
         jnoortheen.nix-ide
         myriad-dreamin.tinymist
+        # scala-lang.scala
         scalameta.metals
       ];
     };
