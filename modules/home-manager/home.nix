@@ -179,13 +179,17 @@
     };
     vscode = {
       enable = true;
+      mutableExtensionsDir = false;
       profiles.default.extensions = with pkgs.vscode-extensions; [
         james-yu.latex-workshop
         rust-lang.rust-analyzer
         jnoortheen.nix-ide
         myriad-dreamin.tinymist
-        # scala-lang.scala
         scalameta.metals
+        mkhl.direnv
+        github.vscode-github-actions
+        github.copilot
+        github.copilot-chat
       ];
     };
   };
