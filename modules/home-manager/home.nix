@@ -87,7 +87,7 @@
     prusa-slicer
 
     typst
-    typstfmt
+    typstyle
 
     texlive.combined.scheme-full
 
