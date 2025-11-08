@@ -186,6 +186,7 @@
         jnoortheen.nix-ide
         myriad-dreamin.tinymist
         scalameta.metals
+        scala-lang.scala
         mkhl.direnv
         github.vscode-github-actions
         github.copilot
