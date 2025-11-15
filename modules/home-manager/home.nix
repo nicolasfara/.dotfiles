@@ -1,6 +1,90 @@
 { pkgs, ... }:
 
-{
+let
+  multimedia-deps = with pkgs; [
+    ffmpeg
+    mpv
+    vlc
+  ];
+  graphics-deps = with pkgs; [
+    gimp
+    inkscape
+  ];
+  shell-deps = with pkgs; [
+    btop
+    cabextract
+    coreutils-full
+    file
+    fastfetch
+    fzf
+    gh
+    git
+    git-quick-stats
+    gnumake
+    icu
+    iperf
+    iperf2
+    ipmitool
+    killall
+    libyaml
+    ncdu
+    neofetch
+    nil
+    nmap
+    ookla-speedtest
+    p7zip
+    pciutils
+    podman
+    rsync
+    screen
+    sshfs
+    tmux
+    tree
+    unrar
+    unzip
+    walk
+    watch
+    wget
+    wl-clipboard
+    xclip
+    zstd
+  ];
+  applications-deps = with pkgs; [
+    discord
+    freecad-wayland
+    google-chrome
+    jetbrains.idea-ultimate
+    kicad
+    onlyoffice-desktopeditors
+    prusa-slicer
+    remmina
+    signal-desktop-bin
+    spotify
+    teams-for-linux
+    telegram-desktop
+    vesktop
+    wireshark
+    zoom-us
+  ];
+  programming-deps = with pkgs; [
+    android-tools
+    coursier
+    eslint
+    espup
+    gcc
+    gradle
+    kotlin
+    metals
+    nodejs_24
+    rustup
+    ruby
+    sbt
+    scala
+    scala-cli
+    uv
+    yarn
+  ];
+in {
   home.username = "nicolas";
 
   # This value determines the Home Manager release that your configuration is
@@ -13,114 +97,21 @@
   home.stateVersion = "24.11"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
-    gimp
-    unzip
-    unrar
-    p7zip
-    fzf
-    wireshark
-    libyaml
-    ruby
-    coreutils-full
-    git-quick-stats
-    gnumake
-    inkscape
-    gnumake
-    wl-clipboard
-    xclip
-    tree
-    zstd
-    walk
-    rsync
-    watch
-    tmux
-    nmap
-    ncdu
-
-    pciutils
-    tmux
-    ipmitool
-    teams-for-linux
-    yarn
-    screen
-    killall
-    file
-    gh
-    gcc
-    fastfetch
-    btop
-    sshfs
-    icu
-    discord
-    vesktop
-    google-chrome
-    spotify
-    neofetch
-    jetbrains.idea-ultimate
-    signal-desktop-bin
     prismlauncher
-    git
-    ffmpeg
     k9s
     kubectl
     minikube
-    zoom-us
-    wget
-    cabextract
-    podman
-    ookla-speedtest
-    iperf
-    iperf2
-
-    nil
-
-    telegram-desktop
     nixfmt-rfc-style
-
     age
-
-    remmina
-
-    kicad
-
-    freecad-wayland
-    prusa-slicer
-
     typst
     typstyle
-
     texlive.combined.scheme-full
-
     fira-sans
     fira-math
     font-awesome
-
-    nodejs_24
-    eslint
-
-    inkscape
-
-    onlyoffice-desktopeditors
-
     mqttui
-    uv
-
-    kdePackages.kamoso
-
-    android-tools
-
-    # JVM
-    gradle
-    scala
-    metals
-    coursier
-    sbt
-    scala-cli
-    kotlin
-
-    rustup
-    espup
-  ];
+    kdePackages.kamoso    
+  ] ++ multimedia-deps ++ graphics-deps ++ shell-deps ++ applications-deps ++ programming-deps;
 
   home.file = {
     # # Building this configuration will create a copy of 'dotfiles/screenrc' in
@@ -197,9 +188,11 @@
 
   programs.git = {
     enable = true;
-    userName = "Nicolas Farabegoli";
-    userEmail = "nicolas.farabegoli@gmail.com";
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Nicolas Farabegoli";
+        email = "nicolas.farabegoli@gmail.com";
+      };
       pull = {
         rebase = true;
       };
