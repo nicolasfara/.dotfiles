@@ -21,6 +21,7 @@ let
     git
     git-quick-stats
     gnumake
+    httpie
     icu
     iperf
     iperf2
