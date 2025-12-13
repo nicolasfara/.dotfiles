@@ -10,11 +10,13 @@
         enable = true;
         theme = "af-magic";
         plugins = [
-          "git"
-          "sudo"
-          "docker"
           "1password"
+          "docker"
+          "fasd"
+          "fzf"
+          "git"
           "rust"
+          "sudo"
         ];
       };
 

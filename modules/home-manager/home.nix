@@ -15,6 +15,7 @@ let
     cabextract
     coreutils-full
     file
+    fasd
     fastfetch
     fzf
     gh
