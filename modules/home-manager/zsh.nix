@@ -11,6 +11,7 @@
         theme = "af-magic";
         plugins = [
           "1password"
+          "direnv"
           "docker"
           "fasd"
           "fzf"

@@ -55,7 +55,7 @@ let
     discord
     freecad-wayland
     google-chrome
-    jetbrains.idea-ultimate
+    jetbrains.idea
     kicad
     onlyoffice-desktopeditors
     prusa-slicer
