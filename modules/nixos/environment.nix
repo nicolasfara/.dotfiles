@@ -15,6 +15,7 @@
     libfprint
     libfprint-tod
     direnv
+    nix-direnv
   ];
 
   # Enable ZSH as the default shell

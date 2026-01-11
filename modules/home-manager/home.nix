@@ -11,13 +11,19 @@ let
     inkscape
   ];
   shell-deps = with pkgs; [
+    bat             # better cat command
     btop
     cabextract
     coreutils-full
+    delta           # better git diff
+    duf             # better df command
+    dust            # better du command
+    eza             # better ls command
+    fd              # better find command to locate
     file
-    fasd
+    # fasd
     fastfetch
-    fzf
+    fzf             # fuzzy finder for the command line
     gh
     git
     git-quick-stats
@@ -37,10 +43,14 @@ let
     p7zip
     pciutils
     podman
+    ripgrep         # rg - better grep
     rsync
     screen
     sshfs
+    tldr            # simplified and community-driven man pages
+    pay-respects    # corrects your previous console command
     tmux
+    trash-cli       # command line trash utility
     tree
     unrar
     unzip
@@ -49,6 +59,7 @@ let
     wget
     wl-clipboard
     xclip
+    zoxide          # z instead of cd
     zstd
   ];
   applications-deps = with pkgs; [
@@ -103,7 +114,7 @@ in {
     k9s
     kubectl
     minikube
-    nixfmt-rfc-style
+    nixfmt
     age
     typst
     typstyle
@@ -111,6 +122,8 @@ in {
     fira-sans
     fira-math
     font-awesome
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
     mqttui
     kdePackages.kamoso    
   ] ++ multimedia-deps ++ graphics-deps ++ shell-deps ++ applications-deps ++ programming-deps;
