@@ -64,7 +64,7 @@ let
     spotify
     teams-for-linux
     telegram-desktop
-    vesktop
+    # vesktop
     wireshark
     zoom-us
   ];
