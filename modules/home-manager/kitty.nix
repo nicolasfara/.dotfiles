@@ -44,6 +44,32 @@
         enable_audio_bell = "no";
         confirm_os_window_close = 0;
         update_check_interval = 0;
+
+        window_border_width = "1pt";
+        active_border_color = "#3daee9";
+        inactive_border_color = "#31363b";
+
+        # === FINESTRE E LAYOUT ===
+        window_padding_width = 8;
+        window_margin_width = 0;
+        single_window_margin_width = 0;
+        
+        # Layout preferito
+        enabled_layouts = "splits,stack";
+      
+        # === TABS ===
+        tab_bar_edge = "top";
+        tab_bar_style = "powerline";
+        tab_powerline_style = "slanted";
+        tab_title_template = "{index}: {title}";
+        
+        active_tab_foreground = "#232629";
+        active_tab_background = "#3daee9";
+        active_tab_font_style = "bold";
+        
+        inactive_tab_foreground = "#eff0f1";
+        inactive_tab_background = "#31363b";
+        inactive_tab_font_style = "normal";
       };
       
       keybindings = {
