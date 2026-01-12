@@ -72,17 +72,8 @@
         };
         
         git_status = {
+          format = "([$all_status$ahead_behind]($style) )";
           style = "bold yellow";
-          conflicted = "🏳";
-          ahead = "⇡";
-          behind = "⇣";
-          diverged = "⇕";
-          untracked = "?";
-          stashed = "$";
-          modified = "!";
-          staged = "+";
-          renamed = "»";
-          deleted = "✘";
         };
         
         cmd_duration = {
