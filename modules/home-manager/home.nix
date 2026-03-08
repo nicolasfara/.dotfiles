@@ -36,7 +36,6 @@ let
     killall
     libyaml
     ncdu
-    neofetch
     nil
     nmap
     ookla-speedtest
@@ -71,7 +70,7 @@ let
     onlyoffice-desktopeditors
     prusa-slicer
     remmina
-    signal-desktop-bin
+    signal-desktop
     spotify
     teams-for-linux
     telegram-desktop
@@ -124,6 +123,9 @@ in {
     font-awesome
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
+    roboto
+    source-sans-pro
+    inter
     mqttui
     kdePackages.kamoso    
   ] ++ multimedia-deps ++ graphics-deps ++ shell-deps ++ applications-deps ++ programming-deps;
@@ -195,8 +197,15 @@ in {
         scala-lang.scala
         mkhl.direnv
         github.vscode-github-actions
-        github.copilot
         github.copilot-chat
+        astro-build.astro-vscode
+      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
+        {
+          name = "chatgpt";
+          publisher = "openai";
+          version = "0.4.79"; # Check marketplace for latest
+          sha256 = "qJZ0GhoCnJdoB+XBy7YYeTk0UG5JExyAI/jowkArGWY="; # Requires hash
+        }
       ];
     };
   };

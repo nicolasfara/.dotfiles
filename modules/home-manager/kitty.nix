@@ -50,7 +50,7 @@
         inactive_border_color = "#31363b";
 
         # === FINESTRE E LAYOUT ===
-        window_padding_width = 8;
+        window_padding_width = 4;
         window_margin_width = 0;
         single_window_margin_width = 0;
         
