@@ -62,6 +62,7 @@
           ./hosts/laptop/configuration.nix
           self.nixosModules.sanoid
           self.nixosModules.env
+          self.nixosModules.wireguard
           home-manager.nixosModules.home-manager
           {
             home-manager.useGlobalPkgs = true;

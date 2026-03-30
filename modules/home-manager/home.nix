@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
   multimedia-deps = with pkgs; [
@@ -123,6 +123,7 @@ in {
     font-awesome
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
+    jetbrains-mono
     roboto
     source-sans-pro
     inter
@@ -185,6 +186,14 @@ in {
       enable = true;
       package = pkgs.jdk25;
     };
+
+    gradle = {
+      enable = true;
+      settings = {
+        "systemProp.jna.library.path" = lib.makeLibraryPath [pkgs.udev];
+      };
+    };
+
     vscode = {
       enable = true;
       mutableExtensionsDir = false;
