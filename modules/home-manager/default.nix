@@ -9,6 +9,7 @@
     ./restic.nix
     ./secrets.nix
     ./syncthing.nix
+    ./vscode.nix
     ./zsh.nix
   ];
 }

@@ -193,30 +193,6 @@ in {
         "systemProp.jna.library.path" = lib.makeLibraryPath [pkgs.udev];
       };
     };
-
-    vscode = {
-      enable = true;
-      mutableExtensionsDir = false;
-      profiles.default.extensions = with pkgs.vscode-extensions; [
-        james-yu.latex-workshop
-        rust-lang.rust-analyzer
-        jnoortheen.nix-ide
-        myriad-dreamin.tinymist
-        scalameta.metals
-        scala-lang.scala
-        mkhl.direnv
-        github.vscode-github-actions
-        github.copilot-chat
-        astro-build.astro-vscode
-      ] ++ pkgs.vscode-utils.extensionsFromVscodeMarketplace [
-        {
-          name = "chatgpt";
-          publisher = "openai";
-          version = "0.4.79"; # Check marketplace for latest
-          sha256 = "qJZ0GhoCnJdoB+XBy7YYeTk0UG5JExyAI/jowkArGWY="; # Requires hash
-        }
-      ];
-    };
   };
 
   programs.git = {

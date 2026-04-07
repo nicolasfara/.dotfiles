@@ -1,13 +1,9 @@
 { pkgs, ... }:
 let
-  inherit (pkgs.nix4vscode) forVscode forOpenVsx;
+  inherit (pkgs.nix4vscode) forVscode;
 in
 {
-  programs.vscode =
-    let
-      inherit (pkgs.nix4vscode) forVscode;
-    in
-    {
+  programs.vscode = {
       enable = true;
       mutableExtensionsDir = false;
 

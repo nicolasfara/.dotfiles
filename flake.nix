@@ -13,6 +13,10 @@
       inputs.home-manager.follows = "home-manager";
     };
     sops-nix.url = "github:Mic92/sops-nix";
+    nix4vscode = {
+      url = "github:nix-community/nix4vscode";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -22,6 +26,7 @@
       home-manager,
       plasma-manager,
       sops-nix,
+      nix4vscode,
     }@inputs:
     let
       inherit (self) outputs;
@@ -40,8 +45,13 @@
           modules = [
             sops-nix.nixosModules.sops
             {
-              # Allow unfree packages globally
-              nixpkgs.config.allowUnfree = true;
+              nixpkgs = {
+                # Allow unfree packages globally
+                config.allowUnfree = true;
+                overlays = [
+                  nix4vscode.overlays.default
+                ];
+              };
             }
           ] ++ modules;
         };
