@@ -67,7 +67,9 @@ let
     google-chrome
     jetbrains.idea
     kicad
+    mendeley
     onlyoffice-desktopeditors
+    opencode
     prusa-slicer
     remmina
     signal-desktop
