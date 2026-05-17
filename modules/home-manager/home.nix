@@ -77,7 +77,7 @@ let
     teams-for-linux
     telegram-desktop
     # vesktop
-    wireshark
+    # wireshark
     zoom-us
   ];
   programming-deps = with pkgs; [

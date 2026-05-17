@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,6 +24,7 @@
     {
       self,
       nixpkgs,
+      nixos-hardware,
       home-manager,
       plasma-manager,
       sops-nix,
@@ -69,6 +71,12 @@
         # Laptop Configuration
         # ---------------------------------
         laptop = mkSystem "x86_64-linux" [
+          nixos-hardware.nixosModules.dell-xps-15-9530-nvidia
+          nixos-hardware.nixosModules.common-pc-laptop
+          nixos-hardware.nixosModules.common-pc-laptop-ssd
+          nixos-hardware.nixosModules.common-cpu-intel
+          nixos-hardware.nixosModules.common-gpu-intel
+          nixos-hardware.nixosModules.common-gpu-nvidia
           ./hosts/laptop/configuration.nix
           self.nixosModules.sanoid
           self.nixosModules.env
