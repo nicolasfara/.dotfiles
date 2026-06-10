@@ -18,9 +18,10 @@ in
         "github.vscode-github-actions"
         "github.copilot-chat"
         "astro-build.astro-vscode"
+        "tamasfe.even-better-toml"
 
         # pinned like your old marketplace entry
-        "openai.chatgpt.0.4.79"
+        "openai.chatgpt"
       ];
     };
 }
