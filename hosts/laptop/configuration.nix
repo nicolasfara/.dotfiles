@@ -119,12 +119,14 @@ in
 
   # Configure keymap in X11
   services.xserver.xkb = {
-    layout = "us";
-    variant = "";
+    layout = "us,it";
+    variant = ",";
+    options = "grp:alt_shift_toggle";
   };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.printing.drivers = [ pkgs.hplipWithPlugin ];
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
