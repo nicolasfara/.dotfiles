@@ -82,6 +82,7 @@ let
   ];
   programming-deps = with pkgs; [
     android-tools
+    claude-code
     coursier
     eslint
     espup
@@ -90,6 +91,7 @@ let
     kotlin
     metals
     nodejs_24
+    railway
     rustup
     ruby
     sbt
@@ -113,16 +115,17 @@ in {
   home.packages = with pkgs; [
     prismlauncher
     k9s
-    kubectl
-    minikube
+    # kubectl
+    # minikube
     nixfmt
     age
     typst
     typstyle
-    texlive.combined.scheme-full
+    texliveFull
     fira-sans
     fira-math
     font-awesome
+    gh
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
     jetbrains-mono
@@ -194,6 +197,13 @@ in {
       settings = {
         "systemProp.jna.library.path" = lib.makeLibraryPath [pkgs.udev];
       };
+    };
+  };
+
+  programs.gh = {
+    enable = true;
+    gitCredentialHelper = {
+      enable = true;
     };
   };
 
