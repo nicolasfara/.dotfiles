@@ -18,6 +18,10 @@
       url = "github:nix-community/nix4vscode";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -103,6 +107,27 @@
           }
         ];
         # ---------------------------------
+        home = mkSystem "x86_64-linux" [
+          disko.nixosModules.disko
+          ./hosts/home/disko.nix
+          nixos-hardware.nixosModules.common-cpu-amd
+          nixos-hardware.nixosModules.common-gpu-nvidia
+          nixos-hardware.nixosModules.common-pc-ssd
+          ./hosts/home/configuration.nix
+          self.nixosModules.env
+          self.nixosModules.wireguard
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.nicolas.imports = [ ./modules/home-manager/default.nix ];
+            home-manager.sharedModules = [
+              sops-nix.homeManagerModules.sops
+              plasma-manager.homeModules.plasma-manager
+            ];
+            home-manager.extraSpecialArgs = { inherit inputs outputs; };
+          }
+        ];
       };
     };
 }
