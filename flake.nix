@@ -33,6 +33,7 @@
       plasma-manager,
       sops-nix,
       nix4vscode,
+      disko,
     }@inputs:
     let
       inherit (self) outputs;
@@ -125,6 +126,11 @@
               sops-nix.homeManagerModules.sops
               plasma-manager.homeModules.plasma-manager
             ];
+            home-manager.users.nicolas.programs.restic.bucketName = "nixos-julia-backup";
+            home-manager.users.nicolas.programs.onepassword = {
+              enable = true;
+              signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
+            };
             home-manager.extraSpecialArgs = { inherit inputs outputs; };
           }
         ];
