@@ -1,7 +1,9 @@
 keys:
   - &alice age1pp46h2muxk59cahg5ud2wnk5pg94lehxr0a6j8nrsxavmn32r9usdpc4lr
+  - &julia age1e3rz7z0jdx6cs0ck5x89fdcygcqxx88cccg6n76xhyvg4qv6dgkskfrx3z
 creation_rules:
   - path_regex: secrets.yaml$
     key_groups:
     - age:
       - *alice
+      - *julia
