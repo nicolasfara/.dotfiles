@@ -43,24 +43,49 @@
       ];
       forAllSystems = nixpkgs.lib.genAttrs systems;
 
-      # Helper function to create NixOS system with common modules
       mkSystem =
-        system: modules:
+        {
+          system ? "x86_64-linux",
+          hostModules,
+          resticBucket,
+        }:
         nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = { inherit inputs outputs; };
           modules = [
             sops-nix.nixosModules.sops
+            home-manager.nixosModules.home-manager
+            self.nixosModules.env
+            self.nixosModules.workstation
+            self.nixosModules.wireguard
             {
               nixpkgs = {
-                # Allow unfree packages globally
                 config.allowUnfree = true;
                 overlays = [
                   nix4vscode.overlays.default
                 ];
               };
+
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = { inherit inputs outputs; };
+                sharedModules = [
+                  sops-nix.homeManagerModules.sops
+                  plasma-manager.homeModules.plasma-manager
+                ];
+                users.nicolas = {
+                  imports = [ ./modules/home-manager/default.nix ];
+                  programs.restic.bucketName = resticBucket;
+                  programs.onepassword = {
+                    enable = true;
+                    signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
+                  };
+                };
+              };
             }
-          ] ++ modules;
+          ]
+          ++ hostModules;
         };
     in
     {
@@ -75,65 +100,31 @@
         # ---------------------------------
         # Laptop Configuration
         # ---------------------------------
-        laptop = mkSystem "x86_64-linux" [
-          nixos-hardware.nixosModules.dell-xps-15-9530-nvidia
-          nixos-hardware.nixosModules.common-pc-laptop
-          nixos-hardware.nixosModules.common-pc-laptop-ssd
-          nixos-hardware.nixosModules.common-cpu-intel
-          nixos-hardware.nixosModules.common-gpu-intel
-          nixos-hardware.nixosModules.common-gpu-nvidia
-          ./hosts/laptop/configuration.nix
-          self.nixosModules.sanoid
-          self.nixosModules.env
-          self.nixosModules.wireguard
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.nicolas.imports = [
-              ./modules/home-manager/default.nix
-            ];
-            home-manager.sharedModules = [
-              sops-nix.homeManagerModules.sops
-              plasma-manager.homeModules.plasma-manager
-            ];
-            home-manager.users.nicolas.programs.restic.bucketName = "nixos-alice-backup";
-            home-manager.users.nicolas.programs.onepassword = {
-              enable = true;
-              signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
-            };
-            home-manager.extraSpecialArgs = {
-              inherit inputs outputs;
-            };
-          }
-        ];
+        laptop = mkSystem {
+          resticBucket = "nixos-alice-backup";
+          hostModules = [
+            nixos-hardware.nixosModules.dell-xps-15-9530-nvidia
+            nixos-hardware.nixosModules.common-pc-laptop
+            nixos-hardware.nixosModules.common-pc-laptop-ssd
+            nixos-hardware.nixosModules.common-cpu-intel
+            nixos-hardware.nixosModules.common-gpu-intel
+            nixos-hardware.nixosModules.common-gpu-nvidia
+            ./hosts/laptop/configuration.nix
+            self.nixosModules.sanoid
+          ];
+        };
         # ---------------------------------
-        home = mkSystem "x86_64-linux" [
-          disko.nixosModules.disko
-          ./hosts/home/disko.nix
-          nixos-hardware.nixosModules.common-cpu-amd
-          nixos-hardware.nixosModules.common-gpu-nvidia
-          nixos-hardware.nixosModules.common-pc-ssd
-          ./hosts/home/configuration.nix
-          self.nixosModules.env
-          self.nixosModules.wireguard
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.nicolas.imports = [ ./modules/home-manager/default.nix ];
-            home-manager.sharedModules = [
-              sops-nix.homeManagerModules.sops
-              plasma-manager.homeModules.plasma-manager
-            ];
-            home-manager.users.nicolas.programs.restic.bucketName = "nixos-julia-backup";
-            home-manager.users.nicolas.programs.onepassword = {
-              enable = true;
-              signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
-            };
-            home-manager.extraSpecialArgs = { inherit inputs outputs; };
-          }
-        ];
+        home = mkSystem {
+          resticBucket = "nixos-julia-backup";
+          hostModules = [
+            disko.nixosModules.disko
+            ./hosts/home/disko.nix
+            nixos-hardware.nixosModules.common-cpu-amd
+            nixos-hardware.nixosModules.common-gpu-nvidia
+            nixos-hardware.nixosModules.common-pc-ssd
+            ./hosts/home/configuration.nix
+          ];
+        };
       };
     };
 }

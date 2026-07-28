@@ -3,7 +3,12 @@
   programs = {
     plasma = {
       enable = true;
-      
+
+      workspace = {
+        lookAndFeel = "org.kde.breezedark.desktop";
+        colorScheme = "BreezeDark";
+      };
+
       panels = [
         {
           location = "bottom";
@@ -34,7 +39,7 @@
                   "org.kde.plasma.networkmanagement"
                   "org.kde.plasma.volume"
                 ];
-                hidden = [];
+                hidden = [ ];
               };
             }
             {

@@ -5,12 +5,7 @@
 # management), Docker enabled (this machine's whole purpose is Yocto builds
 # via Docker per earlier discussion).
 
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -35,14 +30,6 @@
   # find a kernel version compatible with out-of-tree ZFS modules. Btrfs is
   # in-tree, so the default kernel package is fine.
 
-  boot.extraModulePackages = with config.boot.kernelPackages; [
-    v4l2loopback
-  ];
-  boot.extraModprobeConfig = ''
-    options v4l2loopback devices=1 video_nr=1 card_label="OBS Cam" exclusive_caps=1
-  '';
-  security.polkit.enable = true;
-
   # Btrfs subvolumes/mountpoints are declared in hosts/home/disko.nix and
   # wired in via disko.nixosModules.disko at the flake level -- no
   # fileSystems.* or ZFS options needed here.
@@ -51,7 +38,10 @@
   services.btrfs.autoScrub = {
     enable = true;
     interval = "monthly";
-    fileSystems = [ "/" "/data" ];
+    fileSystems = [
+      "/"
+      "/data"
+    ];
   };
 
   # Btrfs equivalent of the laptop's sanoid (ZFS-only) snapshot management.
@@ -76,29 +66,6 @@
   # networking.hostId dropped: that's a ZFS-only requirement (prevents
   # multi-import of a pool), not needed for Btrfs.
 
-  networking.networkmanager.enable = true;
-
-  # Docker, since this machine's purpose is Yocto builds via Docker.
-  virtualisation.docker.enable = true;
-
-  # Set your time zone.
-  time.timeZone = "Europe/Rome";
-
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "it_IT.UTF-8";
-    LC_IDENTIFICATION = "it_IT.UTF-8";
-    LC_MEASUREMENT = "it_IT.UTF-8";
-    LC_MONETARY = "it_IT.UTF-8";
-    LC_NAME = "it_IT.UTF-8";
-    LC_NUMERIC = "it_IT.UTF-8";
-    LC_PAPER = "it_IT.UTF-8";
-    LC_TELEPHONE = "it_IT.UTF-8";
-    LC_TIME = "it_IT.UTF-8";
-  };
-
   # powerManagement.powertop and hardware.nvidia.powerManagement.finegrained
   # dropped: both are laptop-battery / Optimus-hybrid-graphics specific.
   # This is a single always-on discrete GPU desktop.
@@ -110,60 +77,8 @@
   };
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
-
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
-
-  # fprintd dropped: no fingerprint reader on a desktop tower.
-
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us,it";
-    variant = ",";
-    options = "grp:alt_shift_toggle";
-  };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-  services.printing.drivers = [ pkgs.hplipWithPlugin ];
-
-  # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
-  # Define a user account. Don't forget to set a password with 'passwd'.
-  users.users.nicolas = {
-    isNormalUser = true;
-    description = "Nicolas Farabegoli";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "docker"
-    ];
-    packages = with pkgs; [
-      kdePackages.kate
-      vscode
-    ];
-  };
-
-  # Install firefox.
-  programs.firefox.enable = true;
-
   # List packages installed in system profile.
   environment.systemPackages = with pkgs; [
-    vim
-    wget
-    git
     btrfs-progs
     # zfs and gptfdisk dropped: not needed without ZFS, and disko now owns
     # partitioning declaratively instead of manual gdisk/parted sessions.

@@ -2,16 +2,9 @@
 
 {
   environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    wget
     git
-    zfs
-    util-linux
-    gptfdisk
-    restic
-    syncthing
-    direnv
-    nix-direnv
+    vim
+    wget
   ];
 
   # Enable ZSH as the default shell
@@ -33,14 +26,10 @@
     SUBSYSTEM=="usb", ATTR{idVendor}=="0403", ATTR{idProduct}=="6015", MODE="0666", GROUP="dialout"
   '';
 
-  users.users.nicolas.extraGroups = [ "docker" "dialout" "plugdev" ];
-  
-  # OBS Studio with DroidCam plugin
-  programs.obs-studio = {
-    enable = true;
-    enableVirtualCamera = true;
-    plugins = with pkgs.obs-studio-plugins; [
-      droidcam-obs
-    ];
-  };
+  users.users.nicolas.extraGroups = [
+    "docker"
+    "dialout"
+    "plugdev"
+  ];
+
 }
