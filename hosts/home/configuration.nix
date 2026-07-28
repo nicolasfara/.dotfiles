@@ -69,9 +69,17 @@
   # powerManagement.powertop and hardware.nvidia.powerManagement.finegrained
   # dropped: both are laptop-battery / Optimus-hybrid-graphics specific.
   # This is a single always-on discrete GPU desktop.
+  #
+  # powerManagement.enable is NOT Optimus-specific though -- it installs the
+  # nvidia-suspend/nvidia-hibernate/nvidia-resume systemd services that save
+  # and restore GPU video memory across S3 sleep. Without it, resume from
+  # suspend hangs indefinitely on this machine (confirmed via journalctl:
+  # every suspend attempt logs "PM: suspend entry (deep)" as its last line,
+  # with no resume ever logged, requiring a hard power cycle).
   hardware.nvidia = {
     modesetting.enable = true; # required for Wayland/Plasma
     open = true; # Ampere (RTX 3080) is supported by the open kernel modules
+    powerManagement.enable = true;
     prime.sync.enable = false;
     prime.offload.enable = false;
   };
