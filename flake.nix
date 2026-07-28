@@ -48,6 +48,7 @@
           system ? "x86_64-linux",
           hostModules,
           resticBucket,
+          healthchecksSecret,
         }:
         nixpkgs.lib.nixosSystem {
           inherit system;
@@ -77,6 +78,7 @@
                 users.nicolas = {
                   imports = [ ./modules/home-manager/default.nix ];
                   programs.restic.bucketName = resticBucket;
+                  programs.restic.healthchecksSecret = healthchecksSecret;
                   programs.onepassword = {
                     enable = true;
                     signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFPacHq6GiFIEA4o0D4B74K20je+KeSxkuIUvr6oF4wJ";
@@ -102,6 +104,7 @@
         # ---------------------------------
         laptop = mkSystem {
           resticBucket = "nixos-alice-backup";
+          healthchecksSecret = "healthchecks_alice";
           hostModules = [
             nixos-hardware.nixosModules.dell-xps-15-9530-nvidia
             nixos-hardware.nixosModules.common-pc-laptop
@@ -116,6 +119,7 @@
         # ---------------------------------
         home = mkSystem {
           resticBucket = "nixos-julia-backup";
+          healthchecksSecret = "healthchecks_julia";
           hostModules = [
             disko.nixosModules.disko
             ./hosts/home/disko.nix

@@ -16,6 +16,11 @@ in
         description = "Backblaze B2 bucket name for restic backups";
         example = "my-backup-bucket";
       };
+      healthchecksSecret = lib.mkOption {
+        type = lib.types.str;
+        description = "Name of the SOPS secret containing the Healthchecks.io ping key";
+        example = "healthchecks_alice";
+      };
     };
   };
 
@@ -51,7 +56,7 @@ in
               export B2_ACCOUNT_KEY="$(cat ${config.sops.secrets.backblaze_account_key.path})"
               export RESTIC_REPOSITORY="b2:${cfg.bucketName}"
               export RESTIC_PASSWORD="$(cat ${config.sops.secrets.restic_password.path})"
-              HEALTHCHECKS_KEY="$(cat ${config.sops.secrets.healthchecks_alice.path})"
+              HEALTHCHECKS_KEY="$(cat ${config.sops.secrets.${cfg.healthchecksSecret}.path})"
               HEALTHCHECKS_URL="https://hc-ping.com/$HEALTHCHECKS_KEY"
 
               # Create a temporary file for logs
@@ -99,7 +104,7 @@ in
               # Create backup and capture output
               BACKUP_START=$(date +%s)
               echo "Backup started at $(date)" >> "$LOG_FILE"
-              
+
               # Add backup timeout using the timeout command
               if timeout 3h ${pkgs.restic}/bin/restic backup \
                 --verbose \
@@ -172,7 +177,7 @@ in
             echo "Backup failed, attempting to unlock repository..."
             ${pkgs.restic}/bin/restic unlock || true
             
-            HEALTHCHECKS_KEY="$(cat ${config.sops.secrets.healthchecks_alice.path})"
+            HEALTHCHECKS_KEY="$(cat ${config.sops.secrets.${cfg.healthchecksSecret}.path})"
             HEALTHCHECKS_URL="https://hc-ping.com/$HEALTHCHECKS_KEY"
             
             # Create failure message
@@ -227,7 +232,7 @@ in
       Service = {
         Type = "oneshot";
         PrivateTmp = true;
-        ExecStart = 
+        ExecStart =
           let
             maintenanceScript = pkgs.writeShellScript "restic-maintenance" ''
               set -euo pipefail

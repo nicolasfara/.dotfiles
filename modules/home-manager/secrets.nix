@@ -17,8 +17,8 @@
       syncthing_password = {
         path = "${config.sops.defaultSymlinkPath}/syncthing_password";
       };
-      healthchecks_alice = {
-        path = "${config.sops.defaultSymlinkPath}/healthchecks_alice";
+      ${config.programs.restic.healthchecksSecret} = {
+        path = "${config.sops.defaultSymlinkPath}/${config.programs.restic.healthchecksSecret}";
       };
     };
   };
