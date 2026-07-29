@@ -26,19 +26,18 @@
           path = "${config.home.homeDirectory}/Documents";
           devices = [ "alice" "julia" ];
           ignorePerms = false;
+          ignorePatterns = [
+            ".DS_Store"
+            ".git"
+            ".gitignore"
+            ".idea"
+            "**/node_modules"
+            "**/vendor"
+            # Ignore specific folders
+            "**/repos"
+          ];
         };
       };
-
-      ignores = [
-        ".DS_Store"
-        ".git"
-        ".gitignore"
-        ".idea"
-        "**/node_modules"
-        "**/vendor"
-        # Ignore specific folders
-        "**/repos"
-      ];
     };
   };
 }
