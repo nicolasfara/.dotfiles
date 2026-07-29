@@ -19,7 +19,7 @@ in
         "github.copilot-chat"
         "astro-build.astro-vscode"
         "tamasfe.even-better-toml"
-
+        "anthropic.claude-code"
         # pinned like your old marketplace entry
         "openai.chatgpt"
       ];
