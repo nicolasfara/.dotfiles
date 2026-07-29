@@ -39,23 +39,6 @@
   # handing off to firmware S3) resumes correctly every time.
   boot.kernelParams = [ "mem_sleep_default=s2idle" ];
 
-  # The Logitech receiver for the MX Master 3 mouse (idProduct c52b) is
-  # wired as an ACPI wakeup source and spuriously wakes the machine ~2s
-  # after every suspend -- almost certainly from the mouse's own motion/RF
-  # noise or its periodic HID++ status polling, confirmed via
-  # /proc/acpi/wakeup and /sys/bus/usb/devices/*/power/wakeup. Disabling
-  # its wakeup capability stops it. The keyboard's receiver (idProduct
-  # c548) is left alone so a keypress can still wake the machine normally.
-  # A udev rule is needed for this to survive reboots, since the sysfs
-  # attribute resets to the hardware default (enabled) on every boot.
-  services.udev.extraRules = ''
-    ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="046d", ATTR{idProduct}=="c52b", ATTR{power/wakeup}="disabled"
-  '';
-
-  # No boot.kernelPackages pin here: that block on the laptop exists only to
-  # find a kernel version compatible with out-of-tree ZFS modules. Btrfs is
-  # in-tree, so the default kernel package is fine.
-
   # Btrfs subvolumes/mountpoints are declared in hosts/home/disko.nix and
   # wired in via disko.nixosModules.disko at the flake level -- no
   # fileSystems.* or ZFS options needed here.
