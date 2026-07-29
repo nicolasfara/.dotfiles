@@ -5,7 +5,7 @@
 # management), Docker enabled (this machine's whole purpose is Yocto builds
 # via Docker per earlier discussion).
 
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   imports = [
@@ -25,6 +25,32 @@
     };
     efi.canTouchEfiVariables = true;
   };
+  boot.supportedFilesystems = [ "ntfs" ];
+
+  # Suspend used to hang indefinitely on this machine: every "deep" (S3)
+  # suspend logged only "PM: suspend entry (deep)" and nothing else, ever --
+  # not even with /sys/power/pm_debug_messages=1 enabled, which should log
+  # every device's suspend/resume. That total silence, persisting even
+  # across a genuine multi-minute sleep (not just an instant freeze), points
+  # at the firmware's S3 resume vector failing rather than any Linux driver:
+  # if firmware never hands control back to the kernel, no kernel code --
+  # logging included -- ever runs again. Confirmed by elimination: switching
+  # to s2idle (which keeps the kernel driving idle states instead of
+  # handing off to firmware S3) resumes correctly every time.
+  boot.kernelParams = [ "mem_sleep_default=s2idle" ];
+
+  # The Logitech receiver for the MX Master 3 mouse (idProduct c52b) is
+  # wired as an ACPI wakeup source and spuriously wakes the machine ~2s
+  # after every suspend -- almost certainly from the mouse's own motion/RF
+  # noise or its periodic HID++ status polling, confirmed via
+  # /proc/acpi/wakeup and /sys/bus/usb/devices/*/power/wakeup. Disabling
+  # its wakeup capability stops it. The keyboard's receiver (idProduct
+  # c548) is left alone so a keypress can still wake the machine normally.
+  # A udev rule is needed for this to survive reboots, since the sysfs
+  # attribute resets to the hardware default (enabled) on every boot.
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="046d", ATTR{idProduct}=="c52b", ATTR{power/wakeup}="disabled"
+  '';
 
   # No boot.kernelPackages pin here: that block on the laptop exists only to
   # find a kernel version compatible with out-of-tree ZFS modules. Btrfs is
@@ -79,9 +105,11 @@
   hardware.nvidia = {
     modesetting.enable = true; # required for Wayland/Plasma
     open = true; # Ampere (RTX 3080) is supported by the open kernel modules
-    powerManagement.enable = true;
+    # powerManagement.enable = false;
     prime.sync.enable = false;
     prime.offload.enable = false;
+    powerManagement.finegrained = false;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
   services.xserver.videoDrivers = [ "nvidia" ];
 
