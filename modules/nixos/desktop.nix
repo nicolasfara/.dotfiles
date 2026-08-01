@@ -47,6 +47,18 @@
     };
   };
 
+  # Network HP printer at 10.0.2.0, added via IPP Everywhere (driverless) --
+  # no HPLIP PPD needed even though hplipWithPlugin stays installed above
+  # for HP printers/scanners that don't support driverless IPP.
+  hardware.printers.ensurePrinters = [
+    {
+      name = "HP_Color_LaserJet_MFP_M277dw";
+      description = "HP Color LaserJet MFP M277dw - Studio";
+      deviceUri = "ipp://10.0.2.0/ipp/print";
+      model = "everywhere";
+    }
+  ];
+
   programs = {
     firefox.enable = true;
 
