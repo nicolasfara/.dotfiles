@@ -1,25 +1,23 @@
 { config, lib, ... }:
 
-with lib;
-
 let
   cfg = config.services.sanoidService;
 in
 {
   options.services.sanoidService = {
-    enable = mkEnableOption "Enable Sanoid ZFS snapshot management";
+    enable = lib.mkEnableOption "Enable Sanoid ZFS snapshot management";
 
-    datasets = mkOption {
-      type = types.attrsOf (
-        types.submodule {
+    datasets = lib.mkOption {
+      type = lib.types.attrsOf (
+        lib.types.submodule {
           options = {
-            template = mkOption {
-              type = types.str;
+            template = lib.mkOption {
+              type = lib.types.str;
               default = "backup";
               description = "Template to use for this dataset";
             };
-            recursive = mkOption {
-              type = types.bool;
+            recursive = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Apply snapshots recursively to child datasets";
             };
@@ -36,42 +34,42 @@ in
       };
     };
 
-    templates = mkOption {
-      type = types.attrsOf (
-        types.submodule {
+    templates = lib.mkOption {
+      type = lib.types.attrsOf (
+        lib.types.submodule {
           options = {
-            frequently = mkOption {
-              type = types.int;
+            frequently = lib.mkOption {
+              type = lib.types.int;
               default = 4;
               description = "Number of frequent snapshots to keep (every 15 minutes)";
             };
-            hourly = mkOption {
-              type = types.int;
+            hourly = lib.mkOption {
+              type = lib.types.int;
               default = 24;
               description = "Number of hourly snapshots to keep";
             };
-            daily = mkOption {
-              type = types.int;
+            daily = lib.mkOption {
+              type = lib.types.int;
               default = 7;
               description = "Number of daily snapshots to keep";
             };
-            monthly = mkOption {
-              type = types.int;
+            monthly = lib.mkOption {
+              type = lib.types.int;
               default = 12;
               description = "Number of monthly snapshots to keep";
             };
-            yearly = mkOption {
-              type = types.int;
+            yearly = lib.mkOption {
+              type = lib.types.int;
               default = 0;
               description = "Number of yearly snapshots to keep";
             };
-            autosnap = mkOption {
-              type = types.bool;
+            autosnap = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Enable automatic snapshot creation";
             };
-            autoprune = mkOption {
-              type = types.bool;
+            autoprune = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Enable automatic snapshot pruning";
             };
@@ -93,10 +91,10 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
+  config = lib.mkIf cfg.enable {
     services.sanoid = {
       enable = true;
-      datasets = mapAttrs (name: dataset: {
+      datasets = lib.mapAttrs (name: dataset: {
         useTemplate = [ dataset.template ];
         recursive = dataset.recursive;
       }) cfg.datasets;

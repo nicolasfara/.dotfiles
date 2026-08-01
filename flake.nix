@@ -56,8 +56,12 @@
           modules = [
             sops-nix.nixosModules.sops
             home-manager.nixosModules.home-manager
-            self.nixosModules.env
-            self.nixosModules.workstation
+            self.nixosModules.base
+            self.nixosModules.docker
+            self.nixosModules.devBoards
+            self.nixosModules.users
+            self.nixosModules.locale
+            self.nixosModules.desktop
             self.nixosModules.wireguard
             {
               nixpkgs = {

@@ -1,5 +1,8 @@
 { pkgs, ... }:
 
+# Installs NetworkManager and WireGuard tooling only; no tunnel/peers are
+# declared here. Each host configures its own WireGuard connection via
+# nmcli/the NetworkManager applet.
 {
   environment.systemPackages = [
     pkgs.networkmanager
