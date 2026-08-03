@@ -70,4 +70,9 @@
       ];
     };
   };
+
+  fonts.packages = with pkgs; [
+    corefonts  # Microsoft TrueType core fonts
+    liberation_ttf
+  ];
 }
