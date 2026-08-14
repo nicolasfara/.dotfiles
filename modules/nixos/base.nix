@@ -4,8 +4,11 @@
   # Minimal packages that must exist outside any user's home-manager profile
   # (e.g. available to root during system activation). Interactive user
   # tools (git, wget, etc.) live in modules/home-manager instead.
-  environment.systemPackages = [
-    pkgs.vim
+  environment.systemPackages = with pkgs; [
+    vim
+    (python3.withPackages (python-pkgs: with python-pkgs; [
+      requests
+    ]))
   ];
 
   # Enable ZSH as the default shell

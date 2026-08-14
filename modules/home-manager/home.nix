@@ -68,6 +68,7 @@ let
     jetbrains.idea
     kicad
     mendeley
+    mqtt-explorer
     onlyoffice-desktopeditors
     opencode
     prusa-slicer
@@ -83,10 +84,12 @@ let
   programming-deps = with pkgs; [
     android-tools
     claude-code
+    codex
     coursier
     eslint
     espup
     gcc
+    git-repo
     gradle
     kotlin
     metals
