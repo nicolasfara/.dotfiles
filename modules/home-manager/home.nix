@@ -71,6 +71,7 @@ let
     mqtt-explorer
     onlyoffice-desktopeditors
     opencode
+    openscad
     prusa-slicer
     remmina
     signal-desktop
