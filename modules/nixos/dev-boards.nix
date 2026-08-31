@@ -56,7 +56,10 @@ let
   };
 in
 {
-  environment.systemPackages = [ genio-tools ];
+  environment.systemPackages = [
+    genio-tools
+    pkgs.segger-jlink-headless
+  ];
 
   # udev rules granting non-root USB access (via the "dialout" group) to
   # common development boards: ESP32 boards with native USB-JTAG-Serial and

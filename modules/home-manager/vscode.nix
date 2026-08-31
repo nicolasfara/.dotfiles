@@ -22,6 +22,8 @@ in
         "anthropic.claude-code"
         # pinned like your old marketplace entry
         "openai.chatgpt"
+        "ms-vscode-remote.vscode-remote-extensionpack"
+        "ms-vscode-remote.remote-ssh"
       ];
     };
 }
