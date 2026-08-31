@@ -69,6 +69,13 @@
         droidcam-obs
       ];
     };
+
+    # Install 1Password system-wide and register its polkit action so it can
+    # delegate unlocking to PAM.
+    _1password-gui = {
+      enable = true;
+      polkitPolicyOwners = [ "nicolas" ];
+    };
   };
 
   fonts.packages = with pkgs; [

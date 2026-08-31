@@ -81,13 +81,6 @@ in
   # Enable fingerprint scanner
   services.fprintd.enable = true;
 
-  # Install 1Password system-wide and register its polkit action so it can
-  # delegate unlocking to PAM (including fprintd).
-  programs._1password-gui = {
-    enable = true;
-    polkitPolicyOwners = [ "nicolas" ];
-  };
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
