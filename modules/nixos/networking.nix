@@ -10,8 +10,12 @@
     pkgs.wireguard-tools # Allows using wg and wg-quick commands
   ];
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+    enable = true;
+    plugins = with pkgs; [
+      networkmanager-openvpn
+    ];
+  };
 
   # Allow wireguard connections through firewall
   networking.firewall.checkReversePath = "loose";

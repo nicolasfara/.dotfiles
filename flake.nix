@@ -62,7 +62,7 @@
             self.nixosModules.users
             self.nixosModules.locale
             self.nixosModules.desktop
-            self.nixosModules.wireguard
+            self.nixosModules.networking
             {
               nixpkgs = {
                 config.allowUnfree = true;

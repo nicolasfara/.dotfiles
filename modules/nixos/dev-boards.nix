@@ -54,12 +54,96 @@ let
     ];
     doCheck = false;
   };
+
+  # Silicon Labs Simplicity Commander (GUI + CLI) for flashing/debugging EFR32 and
+  # EFM32 parts. Not in nixpkgs and shipped only as a prebuilt Qt5 bundle, so it is
+  # patchelf'd against nixpkgs libs rather than built from source. The bundled Qt5
+  # and J-Link libs under lib/ are kept and picked up automatically by autoPatchelf.
+  # libjlinkarm dlopen()s libudev at runtime, hence the runtimeDependencies entry.
+  # Upstream serves one unversioned URL and overwrites it on every release, so the
+  # hash breaks whenever they publish: bump `version`/`build` and re-fetch then.
+  simplicity-commander =
+    let
+      build = "1v25p0b1995";
+      arch =
+        {
+          x86_64-linux = "x86_64";
+          aarch64-linux = "aarch64";
+        }
+        .${pkgs.stdenv.hostPlatform.system}
+          or (throw "simplicity-commander: unsupported system ${pkgs.stdenv.hostPlatform.system}");
+    in
+    pkgs.stdenv.mkDerivation {
+      pname = "simplicity-commander";
+      version = "1.25.0";
+
+      src = pkgs.fetchurl {
+        url = "https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip";
+        hash = "sha256-pvotkGdXrw/Tf2DqYO3gQwrDYO/zi33LhAldwomEYI4=";
+      };
+
+      nativeBuildInputs = with pkgs; [ unzip autoPatchelfHook ];
+
+      buildInputs = with pkgs; [
+        stdenv.cc.cc.lib
+        dbus
+        fontconfig
+        freetype
+        glib
+        krb5
+        libGL
+        libxkbcommon
+        zlib
+        libx11
+        libxext
+        libxcb
+      ];
+
+      runtimeDependencies = [ pkgs.systemdLibs ];
+
+      sourceRoot = ".";
+      dontConfigure = true;
+      dontBuild = true;
+      dontStrip = true;
+
+      unpackPhase = ''
+        runHook preUnpack
+        unzip -q $src
+        tar -xf SimplicityCommander-Linux/Commander_linux_${arch}_${build}.tar.bz
+        tar -xf SimplicityCommander-Linux/Commander-cli_linux_${arch}_${build}.tar.bz
+        runHook postUnpack
+      '';
+
+      installPhase = ''
+        runHook preInstall
+        mkdir -p $out/libexec $out/bin
+        cp -r commander commander-cli $out/libexec/
+        ln -s $out/libexec/commander/commander $out/bin/commander
+        ln -s $out/libexec/commander-cli/commander-cli $out/bin/commander-cli
+        ln -s $out/libexec/commander/silink $out/bin/silink
+        install -Dm444 commander/99-jlink.rules $out/lib/udev/rules.d/99-jlink.rules
+        runHook postInstall
+      '';
+
+      meta = with pkgs.lib; {
+        description = "Silicon Labs Simplicity Commander: flashing and debugging tool for EFR32/EFM32 devices";
+        homepage = "https://www.silabs.com/developer-tools/simplicity-studio/simplicity-commander";
+        license = licenses.unfree;
+        platforms = [ "x86_64-linux" "aarch64-linux" ];
+        mainProgram = "commander-cli";
+      };
+    };
 in
 {
   environment.systemPackages = [
     genio-tools
+    simplicity-commander
     pkgs.segger-jlink-headless
   ];
+
+  # Simplicity Commander talks to WSTK/Silabs boards through their on-board J-Link
+  # probe (VID 0x1366), which needs the SEGGER udev rules to be usable as non-root.
+  services.udev.packages = [ simplicity-commander ];
 
   # udev rules granting non-root USB access (via the "dialout" group) to
   # common development boards: ESP32 boards with native USB-JTAG-Serial and

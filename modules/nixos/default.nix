@@ -6,5 +6,5 @@
   locale = import ./locale.nix;
   sanoid = import ./sanoid.nix;
   users = import ./users.nix;
-  wireguard = import ./wireguard.nix;
+  networking = import ./networking.nix;
 }
