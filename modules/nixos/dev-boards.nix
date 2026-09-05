@@ -55,11 +55,17 @@ let
     doCheck = false;
   };
 
-  # Silicon Labs Simplicity Commander (GUI + CLI) for flashing/debugging EFR32 and
-  # EFM32 parts. Not in nixpkgs and shipped only as a prebuilt Qt5 bundle, so it is
-  # patchelf'd against nixpkgs libs rather than built from source. The bundled Qt5
-  # and J-Link libs under lib/ are kept and picked up automatically by autoPatchelf.
-  # libjlinkarm dlopen()s libudev at runtime, hence the runtimeDependencies entry.
+  # Silicon Labs Simplicity Commander for flashing/debugging EFR32 and EFM32 parts.
+  # Not in nixpkgs and shipped only as a prebuilt Qt5 bundle, so it is patchelf'd
+  # against nixpkgs libs rather than built from source. The bundled Qt5 and J-Link
+  # libs under lib/ are kept and picked up automatically by autoPatchelf, and
+  # libjlinkarm dlopen()s libudev, hence the runtimeDependencies entry.
+  #
+  # Only the CLI half of the zip is installed. The GUI (Commander_linux_*) segfaults
+  # whenever its Settings menu is opened -- a jump through a garbage pointer in the
+  # menu's aboutToShow handler, reproducible on the untouched upstream binary in an
+  # FHS sandbox, so not something this derivation can patch around.
+  #
   # Upstream serves one unversioned URL and overwrites it on every release, so the
   # hash breaks whenever they publish: bump `version`/`build` and re-fetch then.
   simplicity-commander =
@@ -87,16 +93,9 @@ let
       buildInputs = with pkgs; [
         stdenv.cc.cc.lib
         dbus
-        fontconfig
-        freetype
         glib
         krb5
-        libGL
-        libxkbcommon
         zlib
-        libx11
-        libxext
-        libxcb
       ];
 
       runtimeDependencies = [ pkgs.systemdLibs ];
@@ -109,7 +108,6 @@ let
       unpackPhase = ''
         runHook preUnpack
         unzip -q $src
-        tar -xf SimplicityCommander-Linux/Commander_linux_${arch}_${build}.tar.bz
         tar -xf SimplicityCommander-Linux/Commander-cli_linux_${arch}_${build}.tar.bz
         runHook postUnpack
       '';
@@ -117,16 +115,15 @@ let
       installPhase = ''
         runHook preInstall
         mkdir -p $out/libexec $out/bin
-        cp -r commander commander-cli $out/libexec/
-        ln -s $out/libexec/commander/commander $out/bin/commander
+        cp -r commander-cli $out/libexec/
         ln -s $out/libexec/commander-cli/commander-cli $out/bin/commander-cli
-        ln -s $out/libexec/commander/silink $out/bin/silink
-        install -Dm444 commander/99-jlink.rules $out/lib/udev/rules.d/99-jlink.rules
+        ln -s $out/libexec/commander-cli/silink $out/bin/silink
+        install -Dm444 commander-cli/99-jlink.rules $out/lib/udev/rules.d/99-jlink.rules
         runHook postInstall
       '';
 
       meta = with pkgs.lib; {
-        description = "Silicon Labs Simplicity Commander: flashing and debugging tool for EFR32/EFM32 devices";
+        description = "Silicon Labs Simplicity Commander CLI: flashing and debugging tool for EFR32/EFM32 devices";
         homepage = "https://www.silabs.com/developer-tools/simplicity-studio/simplicity-commander";
         license = licenses.unfree;
         platforms = [ "x86_64-linux" "aarch64-linux" ];
