@@ -20,6 +20,8 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.segger-jlink.acceptLicense = true;
 
+  services.teamviewer.enable = true;
+
   nix.gc = {
     automatic = true;
     dates = "weekly";

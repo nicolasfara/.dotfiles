@@ -77,6 +77,7 @@ let
     signal-desktop
     spotify
     teams-for-linux
+    teamviewer
     telegram-desktop
     # vesktop
     # wireshark
@@ -92,6 +93,7 @@ let
     gcc
     git-repo
     gradle
+    kas
     kotlin
     metals
     nodejs_24
