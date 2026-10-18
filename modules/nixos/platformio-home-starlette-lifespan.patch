@@ -1,0 +1,35 @@
+--- a/platformio/home/run.py	2026-10-08 11:01:09.060060285 +0200
++++ b/platformio/home/run.py	2026-10-08 11:01:09.073904030 +0200
+@@ -13,6 +13,7 @@
+ # limitations under the License.
+ 
+ import os
++from contextlib import asynccontextmanager
+ from urllib.parse import urlparse
+ 
+ import click
+@@ -86,16 +87,18 @@
+     if path != "/":
+         routes.append(Route("/", protected_page))
+ 
++    @asynccontextmanager
++    async def lifespan(_app):
++        click.echo("PIO Home has been started. Press Ctrl+C to shutdown.")
++        if not no_open:
++            click.launch(home_url)
++        yield
++
+     uvicorn.run(
+         Starlette(
+             middleware=[Middleware(ShutdownMiddleware)],
+             routes=routes,
+-            on_startup=[
+-                lambda: click.echo(
+-                    "PIO Home has been started. Press Ctrl+C to shutdown."
+-                ),
+-                lambda: None if no_open else click.launch(home_url),
+-            ],
++            lifespan=lifespan,
+         ),
+         host=host,
+         port=port,

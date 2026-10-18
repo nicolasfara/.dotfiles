@@ -85,6 +85,9 @@ let
   ];
   programming-deps = with pkgs; [
     android-tools
+    ansible
+    ansible-lint
+    ansible-doctor
     claude-code
     codex
     coursier

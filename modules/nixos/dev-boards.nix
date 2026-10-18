@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 
 let
   genio-bootrom = pkgs.python3Packages.buildPythonPackage {
@@ -95,60 +95,99 @@ let
           "-H" "Accept-Encoding: identity"
         ];
       };
+  #     nativeBuildInputs = with pkgs; [ unzip autoPatchelfHook ];
 
-      nativeBuildInputs = with pkgs; [ unzip autoPatchelfHook ];
+  #     buildInputs = with pkgs; [
+  #       stdenv.cc.cc.lib
+  #       dbus
+  #       glib
+  #       krb5
+  #       zlib
+  #     ];
 
-      buildInputs = with pkgs; [
-        stdenv.cc.cc.lib
-        dbus
-        glib
-        krb5
-        zlib
-      ];
+  #     runtimeDependencies = [ pkgs.systemdLibs ];
 
-      runtimeDependencies = [ pkgs.systemdLibs ];
+  #     sourceRoot = ".";
+  #     dontConfigure = true;
+  #     dontBuild = true;
+  #     dontStrip = true;
 
-      sourceRoot = ".";
-      dontConfigure = true;
-      dontBuild = true;
-      dontStrip = true;
+  #     unpackPhase = ''
+  #       runHook preUnpack
+  #       unzip -q $src
+  #       tar -xf SimplicityCommander-Linux/Commander-cli_linux_${arch}_${build}.tar.bz
+  #       runHook postUnpack
+  #     '';
 
-      unpackPhase = ''
-        runHook preUnpack
-        unzip -q $src
-        tar -xf SimplicityCommander-Linux/Commander-cli_linux_${arch}_${build}.tar.bz
-        runHook postUnpack
-      '';
+  #     installPhase = ''
+  #       runHook preInstall
+  #       mkdir -p $out/libexec $out/bin
+  #       cp -r commander-cli $out/libexec/
+  #       ln -s $out/libexec/commander-cli/commander-cli $out/bin/commander-cli
+  #       ln -s $out/libexec/commander-cli/silink $out/bin/silink
+  #       install -Dm444 commander-cli/99-jlink.rules $out/lib/udev/rules.d/99-jlink.rules
+  #       runHook postInstall
+  #     '';
 
-      installPhase = ''
-        runHook preInstall
-        mkdir -p $out/libexec $out/bin
-        cp -r commander-cli $out/libexec/
-        ln -s $out/libexec/commander-cli/commander-cli $out/bin/commander-cli
-        ln -s $out/libexec/commander-cli/silink $out/bin/silink
-        install -Dm444 commander-cli/99-jlink.rules $out/lib/udev/rules.d/99-jlink.rules
-        runHook postInstall
-      '';
-
-      meta = with pkgs.lib; {
-        description = "Silicon Labs Simplicity Commander CLI: flashing and debugging tool for EFR32/EFM32 devices";
-        homepage = "https://www.silabs.com/developer-tools/simplicity-studio/simplicity-commander";
-        license = licenses.unfree;
-        platforms = [ "x86_64-linux" "aarch64-linux" ];
-        mainProgram = "commander-cli";
-      };
-    };
+  #     meta = with pkgs.lib; {
+  #       description = "Silicon Labs Simplicity Commander CLI: flashing and debugging tool for EFR32/EFM32 devices";
+  #       homepage = "https://www.silabs.com/developer-tools/simplicity-studio/simplicity-commander";
+  #       license = licenses.unfree;
+  #       platforms = [ "x86_64-linux" "aarch64-linux" ];
+  #       mainProgram = "commander-cli";
+  #     };
+  #   };
 in
 {
+  # PlatformIO 6.1.19's PIO Home (also what the VS Code extension opens) still passes
+  # `on_startup=` to Starlette, which Starlette 1.x dropped, so it crashes with
+  # "unexpected keyword argument 'on_startup'". Port it to the `lifespan` API.
+  # Applied as an overlay so the CLI and home-manager's VS Code setup (useGlobalPkgs)
+  # both get it.
+  # The full J-Link pack (JLinkExe, JLinkGDBServer, RTT/SWO viewers, J-Flash, ...)
+  # links against SEGGER's own bundled Qt4, which nixpkgs flags as insecure. The
+  # headless variant avoids it but ships only libjlinkarm, no executables. Matched
+  # by name rather than `permittedInsecurePackages` so J-Link bumps don't break it.
+  nixpkgs.config.allowInsecurePredicate = pkg: lib.getName pkg == "segger-jlink-qt4";
+
+  nixpkgs.overlays = [
+    (final: prev: {
+      platformio-core = prev.platformio-core.overridePythonAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ./platformio-home-starlette-lifespan.patch ];
+      });
+    })
+  ];
+
   environment.systemPackages = [
     genio-tools
-    simplicity-commander
-    pkgs.segger-jlink-headless
+    # simplicity-commander
+    pkgs.segger-jlink
+    # FHS-wrapped PlatformIO Core, also used by the VS Code extension (home-manager/vscode.nix).
+    pkgs.platformio
   ];
 
   # Simplicity Commander talks to WSTK/Silabs boards through their on-board J-Link
   # probe (VID 0x1366), which needs the SEGGER udev rules to be usable as non-root.
-  services.udev.packages = [ simplicity-commander ];
+  # services.udev.packages = [ simplicity-commander ];
+
+  # SEGGER J-Link probes (EDU Mini etc., VID 0x1366): ship the vendor udev rules.
+  # PlatformIO downloads prebuilt toolchains/uploaders into ~/.platformio/packages and
+  # runs them via nix-ld (enabled in base.nix). These extend its default library set
+  # with what flashing/debug tools commonly link (OpenOCD, picotool, gdb, ...).
+  programs.nix-ld.libraries = with pkgs; [
+    libusb1
+    libftdi1
+    hidapi
+    ncurses
+    expat
+  ];
+
+  # PlatformIO's 99-platformio-udev.rules: upload/debug access for the boards and
+  # probes it supports (ST-LINK, CMSIS-DAP, Arduino, ESP, Teensy, ...).
+  services.udev.packages = [
+    pkgs.segger-jlink
+    pkgs.platformio-core.udev
+  ];
 
   # udev rules granting non-root USB access (via the "dialout" group) to
   # common development boards: ESP32 boards with native USB-JTAG-Serial and
