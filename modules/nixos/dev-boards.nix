@@ -68,33 +68,33 @@ let
   #
   # Upstream serves one unversioned URL and overwrites it on every release, so the
   # hash breaks whenever they publish: bump `version`/`build` and re-fetch then.
-  simplicity-commander =
-    let
-      build = "1v25p1b2000";
-      arch =
-        {
-          x86_64-linux = "x86_64";
-          aarch64-linux = "aarch64";
-        }
-        .${pkgs.stdenv.hostPlatform.system}
-          or (throw "simplicity-commander: unsupported system ${pkgs.stdenv.hostPlatform.system}");
-    in
-    pkgs.stdenv.mkDerivation {
-      pname = "simplicity-commander";
-      version = "1.25.1";
+  # simplicity-commander =
+  #   let
+  #     build = "1v25p1b2000";
+  #     arch =
+  #       {
+  #         x86_64-linux = "x86_64";
+  #         aarch64-linux = "aarch64";
+  #       }
+  #       .${pkgs.stdenv.hostPlatform.system}
+  #         or (throw "simplicity-commander: unsupported system ${pkgs.stdenv.hostPlatform.system}");
+  #   in
+  #   pkgs.stdenv.mkDerivation {
+  #     pname = "simplicity-commander";
+  #     version = "1.25.1";
 
-      src = pkgs.fetchurl {
-        url = "https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip";
-        hash = "sha256-iLBwRJRp6f7UljMdcGomriSAjC2ifGXBQN7GyAGwq58=";
-        # silabs.com sits behind Akamai, which 403s curl's default request;
-        # browser-like headers (Accept-Encoding in particular) get through.
-        curlOptsList = [
-          "-A" "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0"
-          "-H" "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-          "-H" "Accept-Language: en-US,en;q=0.5"
-          "-H" "Accept-Encoding: identity"
-        ];
-      };
+  #     src = pkgs.fetchurl {
+  #       url = "https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip";
+  #       hash = "sha256-iLBwRJRp6f7UljMdcGomriSAjC2ifGXBQN7GyAGwq58=";
+  #       # silabs.com sits behind Akamai, which 403s curl's default request;
+  #       # browser-like headers (Accept-Encoding in particular) get through.
+  #       curlOptsList = [
+  #         "-A" "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0"
+  #         "-H" "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+  #         "-H" "Accept-Language: en-US,en;q=0.5"
+  #         "-H" "Accept-Encoding: identity"
+  #       ];
+  #     };
   #     nativeBuildInputs = with pkgs; [ unzip autoPatchelfHook ];
 
   #     buildInputs = with pkgs; [
