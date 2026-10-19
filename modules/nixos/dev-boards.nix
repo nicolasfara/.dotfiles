@@ -68,68 +68,76 @@ let
   #
   # Upstream serves one unversioned URL and overwrites it on every release, so the
   # hash breaks whenever they publish: bump `version`/`build` and re-fetch then.
-  # simplicity-commander =
-  #   let
-  #     build = "1v25p0b1995";
-  #     arch =
-  #       {
-  #         x86_64-linux = "x86_64";
-  #         aarch64-linux = "aarch64";
-  #       }
-  #       .${pkgs.stdenv.hostPlatform.system}
-  #         or (throw "simplicity-commander: unsupported system ${pkgs.stdenv.hostPlatform.system}");
-  #   in
-  #   pkgs.stdenv.mkDerivation {
-  #     pname = "simplicity-commander";
-  #     version = "1.25.0";
+  simplicity-commander =
+    let
+      build = "1v25p1b2000";
+      arch =
+        {
+          x86_64-linux = "x86_64";
+          aarch64-linux = "aarch64";
+        }
+        .${pkgs.stdenv.hostPlatform.system}
+          or (throw "simplicity-commander: unsupported system ${pkgs.stdenv.hostPlatform.system}");
+    in
+    pkgs.stdenv.mkDerivation {
+      pname = "simplicity-commander";
+      version = "1.25.1";
 
-  #     src = pkgs.fetchurl {
-  #       url = "https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip";
-  #       hash = "sha256-pvotkGdXrw/Tf2DqYO3gQwrDYO/zi33LhAldwomEYI4=";
-  #     };
+      src = pkgs.fetchurl {
+        url = "https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip";
+        hash = "sha256-iLBwRJRp6f7UljMdcGomriSAjC2ifGXBQN7GyAGwq58=";
+        # silabs.com sits behind Akamai, which 403s curl's default request;
+        # browser-like headers (Accept-Encoding in particular) get through.
+        curlOptsList = [
+          "-A" "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0"
+          "-H" "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+          "-H" "Accept-Language: en-US,en;q=0.5"
+          "-H" "Accept-Encoding: identity"
+        ];
+      };
 
-  #     nativeBuildInputs = with pkgs; [ unzip autoPatchelfHook ];
+      nativeBuildInputs = with pkgs; [ unzip autoPatchelfHook ];
 
-  #     buildInputs = with pkgs; [
-  #       stdenv.cc.cc.lib
-  #       dbus
-  #       glib
-  #       krb5
-  #       zlib
-  #     ];
+      buildInputs = with pkgs; [
+        stdenv.cc.cc.lib
+        dbus
+        glib
+        krb5
+        zlib
+      ];
 
-  #     runtimeDependencies = [ pkgs.systemdLibs ];
+      runtimeDependencies = [ pkgs.systemdLibs ];
 
-  #     sourceRoot = ".";
-  #     dontConfigure = true;
-  #     dontBuild = true;
-  #     dontStrip = true;
+      sourceRoot = ".";
+      dontConfigure = true;
+      dontBuild = true;
+      dontStrip = true;
 
-  #     unpackPhase = ''
-  #       runHook preUnpack
-  #       unzip -q $src
-  #       tar -xf SimplicityCommander-Linux/Commander-cli_linux_${arch}_${build}.tar.bz
-  #       runHook postUnpack
-  #     '';
+      unpackPhase = ''
+        runHook preUnpack
+        unzip -q $src
+        tar -xf SimplicityCommander-Linux/Commander-cli_linux_${arch}_${build}.tar.bz
+        runHook postUnpack
+      '';
 
-  #     installPhase = ''
-  #       runHook preInstall
-  #       mkdir -p $out/libexec $out/bin
-  #       cp -r commander-cli $out/libexec/
-  #       ln -s $out/libexec/commander-cli/commander-cli $out/bin/commander-cli
-  #       ln -s $out/libexec/commander-cli/silink $out/bin/silink
-  #       install -Dm444 commander-cli/99-jlink.rules $out/lib/udev/rules.d/99-jlink.rules
-  #       runHook postInstall
-  #     '';
+      installPhase = ''
+        runHook preInstall
+        mkdir -p $out/libexec $out/bin
+        cp -r commander-cli $out/libexec/
+        ln -s $out/libexec/commander-cli/commander-cli $out/bin/commander-cli
+        ln -s $out/libexec/commander-cli/silink $out/bin/silink
+        install -Dm444 commander-cli/99-jlink.rules $out/lib/udev/rules.d/99-jlink.rules
+        runHook postInstall
+      '';
 
-  #     meta = with pkgs.lib; {
-  #       description = "Silicon Labs Simplicity Commander CLI: flashing and debugging tool for EFR32/EFM32 devices";
-  #       homepage = "https://www.silabs.com/developer-tools/simplicity-studio/simplicity-commander";
-  #       license = licenses.unfree;
-  #       platforms = [ "x86_64-linux" "aarch64-linux" ];
-  #       mainProgram = "commander-cli";
-  #     };
-  #   };
+      meta = with pkgs.lib; {
+        description = "Silicon Labs Simplicity Commander CLI: flashing and debugging tool for EFR32/EFM32 devices";
+        homepage = "https://www.silabs.com/developer-tools/simplicity-studio/simplicity-commander";
+        license = licenses.unfree;
+        platforms = [ "x86_64-linux" "aarch64-linux" ];
+        mainProgram = "commander-cli";
+      };
+    };
 in
 {
   # PlatformIO 6.1.19's PIO Home (also what the VS Code extension opens) still passes
@@ -153,17 +161,12 @@ in
 
   environment.systemPackages = [
     genio-tools
-    # simplicity-commander
+    simplicity-commander
     pkgs.segger-jlink
     # FHS-wrapped PlatformIO Core, also used by the VS Code extension (home-manager/vscode.nix).
     pkgs.platformio
   ];
 
-  # Simplicity Commander talks to WSTK/Silabs boards through their on-board J-Link
-  # probe (VID 0x1366), which needs the SEGGER udev rules to be usable as non-root.
-  # services.udev.packages = [ simplicity-commander ];
-
-  # SEGGER J-Link probes (EDU Mini etc., VID 0x1366): ship the vendor udev rules.
   # PlatformIO downloads prebuilt toolchains/uploaders into ~/.platformio/packages and
   # runs them via nix-ld (enabled in base.nix). These extend its default library set
   # with what flashing/debug tools commonly link (OpenOCD, picotool, gdb, ...).
@@ -175,9 +178,12 @@ in
     expat
   ];
 
+  # SEGGER J-Link probes (EDU Mini, and the on-board probe Simplicity Commander uses
+  # on WSTK/Silabs boards, VID 0x1366) need the vendor udev rules for non-root access.
   # PlatformIO's 99-platformio-udev.rules: upload/debug access for the boards and
   # probes it supports (ST-LINK, CMSIS-DAP, Arduino, ESP, Teensy, ...).
   services.udev.packages = [
+    simplicity-commander
     pkgs.segger-jlink
     pkgs.platformio-core.udev
   ];

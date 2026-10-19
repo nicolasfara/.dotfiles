@@ -59,6 +59,21 @@ in
         "terminal.integrated.gpuAcceleration" = "off";
         "claudeCode.preferredLocation" = "panel";
         "remote.SSH.useExecServer" = false;
+        "files.autoSave" = "onFocusChange";
+        "files.watcherExclude" = {
+          "**/.bloop/**" = true;
+          "**/.metals/**/*.{java,scala}" = true;
+        };
+        "editor.semanticHighlighting.enabled" = false;
+        "task.allowAutomaticTasks" = "on";
+        "github.copilot.nextEditSuggestions.enabled" = true;
+        "github.copilot.enable" = {
+          "*" = true;
+          plaintext = false;
+          markdown = true;
+          scminput = false;
+          scala = false;
+        };
 
         # Out of the box the extension bootstraps its own Python + PlatformIO Core
         # into ~/.platformio/penv, which breaks on NixOS. Point it at nixpkgs' core
